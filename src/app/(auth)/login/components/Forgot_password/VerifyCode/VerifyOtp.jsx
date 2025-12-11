@@ -6,12 +6,27 @@ import { Shadow } from "@/app/components/common_class/Tailwind_common_className"
 
 const OTP_LENGTH = 6;
 
-export default function VerifyCode({ setIsForgotPass, setVerifyOtp }) {
+const mockVerifyOtpApi = async (email, otp) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (otp === "123456") {
+        resolve({ success: true, message: "OTP verified successfully." });
+      } else {
+        reject({ success: false, message: "Invalid OTP. Please try again." });
+      }
+    }, 1000);
+  });
+};
+
+export default function VerifyOtp({ email, onOtpVerified, onBackToLogin }) {
   const [otp, setOtp] = useState(new Array(OTP_LENGTH).fill(""));
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const inputRefs = useRef([]);
 
   const handleOtpChange = (element, index) => {
     const value = element.value.slice(0, 1);
+    if (error) setError("");
 
     if (/[0-9]/.test(value) || value === "") {
       const newOtp = [...otp];
@@ -30,15 +45,27 @@ export default function VerifyCode({ setIsForgotPass, setVerifyOtp }) {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
     const finalOtp = otp.join("");
 
-    if (finalOtp.length === OTP_LENGTH) {
-      console.log("Submitting OTP:", finalOtp);
-    } else {
-      alert("Please enter the complete 6-digit OTP.");
+    if (finalOtp.length !== OTP_LENGTH) {
+      setError("Please enter the complete 6-digit OTP.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await mockVerifyOtpApi(email, finalOtp);
+      console.log("OTP verified for email:", email);
+      onOtpVerified();
+    } catch (err) {
+      console.error("OTP verification failed:", err);
+      setError(err.message || "OTP verification failed. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -63,7 +90,8 @@ export default function VerifyCode({ setIsForgotPass, setVerifyOtp }) {
           Verify OTP
         </h3>
         <p className="text-subTypo text-xs sm:text-sm">
-          We’ve sent 6 digit OTP into your email address.
+          We’ve sent 6 digit OTP into your email address
+          {email && <span className="font-bold"> ({email})</span>}.
         </p>
       </div>
 
@@ -75,7 +103,7 @@ export default function VerifyCode({ setIsForgotPass, setVerifyOtp }) {
             {otp.map((data, index) => (
               <input
                 key={index}
-                type="text" // Changed to 'text' to better handle backspace and pasting
+                type="text"
                 inputMode="numeric"
                 pattern="[0-9]*"
                 maxLength={1}
@@ -84,26 +112,32 @@ export default function VerifyCode({ setIsForgotPass, setVerifyOtp }) {
                 onKeyDown={(e) => handleKeyDown(e, index)}
                 ref={(element) => (inputRefs.current[index] = element)}
                 className="py-2 md:py-3 shadow-sm shadow-white focus:shadow-primary focus:outline-none lg:py-4 w-full rounded-lg bg-Gray text-subTypo text-center text-lg"
+                disabled={isLoading}
               />
             ))}
           </div>
         </div>
 
+        {error && (
+          <p className="text-sm text-center text-red-500 font-medium">
+            {error}
+          </p>
+        )}
+
         <br />
         <button
           type="submit"
-          className={`py-2 md:py-3 lg:py-4 w-full rounded-lg shadow-custom bg-linear-to-r from-primary/70 hover:from-primary/90 to-primary/90 hover:to-primary text-white md:text-lg font-semibold cursor-pointer active:scale-98 transition-all ease-in-out duration-300`}
+          className={`py-2 md:py-3 lg:py-4 w-full rounded-lg shadow-custom bg-linear-to-r from-primary/70 hover:from-primary/90 to-primary/90 hover:to-primary text-white text-lg md:text-xl font-bold cursor-pointer active:scale-98 transition-all ease-in-out duration-300 disabled:opacity-70 disabled:cursor-not-allowed`}
+          disabled={isLoading}
         >
-          Submit
+          {isLoading ? "Verifying..." : "Submit"}
         </button>
 
         <button
-          onClick={() => {
-            setVerifyOtp(false);
-            setIsForgotPass(true);
-          }}
+          onClick={onBackToLogin}
           type="button"
-          className={`py-2 md:py-3 lg:py-4 w-full rounded-lg shadow-custom outline-2 outline-primary/60 md:text-lg font-semibold cursor-pointer active:scale-98 transition-all ease-in-out duration-300`}
+          className={`py-2 md:py-3 lg:py-4 w-full rounded-lg shadow-custom border border-primary text-lg md:text-xl font-bold cursor-pointer active:scale-98 transition-all ease-in-out duration-300 disabled:opacity-70 disabled:cursor-not-allowed`}
+          disabled={isLoading}
         >
           Back
         </button>
