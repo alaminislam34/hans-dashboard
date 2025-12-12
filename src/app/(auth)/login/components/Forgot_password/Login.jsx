@@ -3,12 +3,14 @@
 import { Shadow } from "@/app/components/common_class/Tailwind_common_className";
 import { EyeOff, Eye, Lock, Mail } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 const mockLoginApi = async (email, password) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      if (email === "test@example.com" && password === "password123") {
+      if (email === "alamin@gmail.com" && password === "alamin12") {
         resolve({ success: true, token: "mock-auth-token" });
       } else if (email === "error@example.com") {
         reject({ success: false, message: "Invalid email or server error." });
@@ -24,6 +26,7 @@ export default function Login({ setIsForgotPass, onLoginSuccess }) {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -45,6 +48,10 @@ export default function Login({ setIsForgotPass, onLoginSuccess }) {
 
       if (response.success) {
         console.log("Login successful! Token:", response.token);
+        toast.success("Login successful!");
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 1000);
         onLoginSuccess && onLoginSuccess(response.token);
       }
     } catch (err) {
@@ -113,7 +120,7 @@ export default function Login({ setIsForgotPass, onLoginSuccess }) {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Enter your password.." 
+              placeholder="Enter your password.."
               className="py-2 md:py-3 shadow-sm shadow-white focus:shadow-primary focus:outline-none lg:py-4 w-full px-12 rounded-lg bg-Gray text-subTypo"
               required
               disabled={isLoading}
