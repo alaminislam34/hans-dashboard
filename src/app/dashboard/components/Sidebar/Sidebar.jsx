@@ -42,7 +42,7 @@ export const links = [
 export default function Sidebar() {
   const path = usePathname();
   return (
-    <div className="w-75 h-[90vh] my-12 bg-linear-to-r from-[#FB665B] via-[#CE51A6] to-[#8951D5] p-10 rounded-2xl sticky top-5 flex flex-col justify-between">
+    <div className="w-11/12 mx-auto h-[90vh] bg-linear-to-r from-[#FB665B] via-[#CE51A6] to-[#8951D5] p-10 rounded-2xl sticky top-5 flex flex-col justify-between">
       <div>
         <Image
           src={"/icons/logo2.png"}
