@@ -1,15 +1,11 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #2563EB;
-  --color-subTypo: #888888;
-  --color-typo: #2B2B2B;
-  --color-Gray: #F3F5F9;
+    --color-secondary: #EAF7FC;
+    --color-primary: #2CACE2;
+    --color-dark: #2B3645;
+    --color-primary_red: #DA1A21
 }
-
-@utility shadow-custom {
-  box-shadow: 0px 4px 4px 0px #8DB0FF25,
-    0px -4px 4px 0px #8DB0FF25,
-    4px 0px 4px 0px #8DB0FF25,
-    -4px 0px 4px 0px #8DB0FF25;
+button {
+    cursor: pointer;
 }
