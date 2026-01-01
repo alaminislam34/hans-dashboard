@@ -1,11 +1,19 @@
 @import "tailwindcss";
 
 @theme {
-    --color-secondary: #EAF7FC;
-    --color-primary: #2CACE2;
-    --color-dark: #2B3645;
-    --color-primary_red: #DA1A21
+    --color-secondary: #49ADF4 ;
+    --color-primary: #2563EB;
+    --color-dark: #2B2B2B;
+    --color-primary_red: #DA1A21;
+    --color-gray: #888888;
+    --color-pendingBG: #FEF3C7;
+    --color-pendingText: #92400E;
+    --color-approvedBG: #D1FAE5;
+    --color-approvedText: #065F46;
+    --color-rejectBG: #FECACA;
+    --color-rejectText: #991B1B;
 }
+
 button {
     cursor: pointer;
 }

@@ -1,53 +1,42 @@
 "use client";
 
-import { useGlobalState } from "@/app/providers/StateProvider";
-import { Bell, Mail, Menu, Search, X } from "lucide-react";
-import Image from "next/image";
+import React, { useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useGlobalState } from "@/app/providers/StateProvider";
+import {
+  Bell,
+  Menu,
+  X,
+  Users,
+  FileText,
+  IdCard,
+  Smartphone,
+  Settings,
+  LayoutGrid,
+} from "lucide-react";
 import { HiOutlineLogout } from "react-icons/hi";
 
-const sidelinks = [
-  {
-    name: "Order Management",
-    href: "/dashboard",
-    match: (pathname) =>
-      pathname === "/dashboard" || /^\/dashboard\/\d+$/.test(pathname),
-  },
-  {
-    name: "Category Management",
-    href: "/dashboard/category_manage",
-    match: (pathname) => pathname.startsWith("/dashboard/category_manage"),
-  },
-  {
-    name: "Products Management",
-    href: "/dashboard/products_manage",
-    match: (pathname) => pathname.startsWith("/dashboard/products_manage"),
-  },
-  {
-    name: "Poster Banner",
-    href: "/dashboard/banner_manage",
-    match: (pathname) => pathname.startsWith("/dashboard/banner_manage"),
-  },
-  {
-    name: "Add brands",
-    href: "/dashboard/add_brands",
-    match: (pathname) => pathname.startsWith("/dashboard/add_brands"),
-  },
+// 1. Move static data outside the component to prevent re-creation on every render
+const NAV_LINKS = [
+  { name: "Dashboard", icon: LayoutGrid, href: "/dashboard" },
+  { name: "Tutor Verification", icon: IdCard, href: "/dashboard/tutor_verify" },
+  { name: "User Management", icon: Users, href: "/dashboard/users_manage" },
   {
     name: "Review Management",
+    icon: FileText,
     href: "/dashboard/review_manage",
-    match: (pathname) => pathname.startsWith("/dashboard/review_manage"),
   },
   {
-    name: "Blog Management",
-    href: "/dashboard/blog_manage",
-    match: (pathname) => pathname.startsWith("/dashboard/blog_manage"),
+    name: "Support Management",
+    icon: Smartphone,
+    href: "/dashboard/support_manage",
   },
   {
-    name: "Account Settings",
-    href: "/dashboard/account_settings",
-    match: (pathname) => pathname.startsWith("/dashboard/account_settings"),
+    name: "System Settings",
+    icon: Settings,
+    href: "/dashboard/system_settings",
   },
 ];
 
@@ -55,112 +44,128 @@ const DashboardNavbar = () => {
   const { isSidebarOpen, setIsSidebarOpen } = useGlobalState();
   const pathname = usePathname();
 
+  // 2. Derive the page title dynamically based on the current path
+  const pageTitle = useMemo(() => {
+    const activeLink = NAV_LINKS.find((link) => link.href === pathname);
+    return activeLink ? activeLink.name : "Management";
+  }, [pathname]);
+
+  const closeSidebar = () => setIsSidebarOpen(false);
+
   return (
-    <div className="p-2 md:p-3 lg:p-4 rounded-xl bg-secondary flex items-center justify-between gap-3 relative z-30">
-      {/* Mobile Menu Button */}
-      <div className="lg:hidden shrink-0">
+    <nav className="p-2 md:p-3 lg:p-4 rounded-xl flex items-center justify-between gap-3 relative z-30">
+      {/* --- Left Section: Mobile Menu & Title --- */}
+      <div className="flex items-center gap-4">
         <button
+          type="button"
           onClick={() => setIsSidebarOpen(true)}
-          className="p-2 border border-primary/50 rounded-xl text-primary hover:bg-primary hover:text-white duration-300 cursor-pointer"
+          className="p-2 border border-primary/50 rounded-xl text-primary hover:bg-primary hover:text-white transition-colors duration-300 lg:hidden shrink-0"
+          aria-label="Open Menu"
         >
           <Menu size={20} />
         </button>
+        <h1 className="text-base md:text-lg lg:text-xl font-semibold text-slate-800">
+          {pageTitle}
+        </h1>
       </div>
 
-      {/* Search Bar */}
-      <div className="flex-1 max-w-2xl">
-        <div className="relative group">
-          <input
-            type="text"
-            placeholder="Search products"
-            className="border bg-white border-primary/50 focus:outline-primary text-gray-500 py-2 px-4 md:px-6 pr-10 md:pr-12 rounded-xl w-full text-sm md:text-base transition-all"
-          />
-          <Search
-            size={18}
-            className="absolute top-1/2 -translate-y-1/2 right-3 md:right-6 text-primary pointer-events-none"
-          />
-        </div>
-      </div>
-
-      {/* Action Buttons */}
+      {/* --- Right Section: Actions --- */}
       <div className="flex items-center gap-2 xl:gap-4 shrink-0">
-        <button className="p-2 hover:bg-primary hover:text-white duration-300 rounded-xl text-primary bg-white cursor-pointer border border-primary/80 transition-all">
-          <Mail size={20} />
-        </button>
-
-        <button className="p-2 hover:bg-primary hover:text-white duration-300 rounded-xl text-primary bg-white cursor-pointer border border-primary/80 relative transition-all">
+        <button
+          type="button"
+          className="p-2 bg-secondary/10 hover:bg-secondary/30 transition-all duration-300 rounded-full text-primary relative"
+        >
           <Bell size={20} />
-          <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-primary_red rounded-full border border-white"></span>
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white" />
         </button>
       </div>
 
-      {/* --- SIDEBAR OVERLAY & PANEL --- */}
+      {/* --- Mobile Sidebar Overlay --- */}
       <div
         className={`fixed inset-0 z-100 transition-all duration-300 ${
           isSidebarOpen ? "visible opacity-100" : "invisible opacity-0"
         }`}
       >
-        {/* Dark Backdrop */}
+        {/* Backdrop */}
         <div
           className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-          onClick={() => setIsSidebarOpen(false)}
+          onClick={closeSidebar}
         />
 
-        {/* Sidebar Content */}
-        <div
-          className={`absolute top-0 left-0 w-80 h-full bg-secondary border-r border-gray-300 p-6 flex flex-col justify-between transition-transform duration-300 ease-in-out ${
+        {/* Sidebar Panel */}
+        <aside
+          className={`absolute top-0 left-0 w-80 bg-white h-full border-r border-gray-200 p-6 flex flex-col transition-transform duration-300 ease-in-out ${
             isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
+          {/* Close Button */}
           <button
-            onClick={() => setIsSidebarOpen(false)}
-            className="absolute p-2 rounded-full border border-primary/30 hover:bg-primary hover:text-white duration-300 text-primary top-4 right-4"
+            type="button"
+            onClick={closeSidebar}
+            className="absolute p-2 rounded-full border border-gray-200 hover:bg-gray-100 text-gray-500 top-4 right-4"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
 
-          <div>
-            <div className="flex items-center justify-center mt-6 mb-12">
-              <Link href="/dashboard" onClick={() => setIsSidebarOpen(false)}>
-                <Image
-                  src="/logos/logo.png"
-                  height={100}
-                  width={200}
-                  alt="Website logo"
-                  className="w-48 h-auto object-contain"
-                />
-              </Link>
+          {/* User Profile */}
+          <div className="flex items-center gap-4 mt-8 mb-10">
+            <div className="relative w-14 h-14 shrink-0">
+              <Image
+                src="/images/user.jpg"
+                fill
+                alt="Profile"
+                className="rounded-lg object-cover"
+              />
             </div>
-
-            <ul className="flex flex-col gap-3">
-              {sidelinks.map((link) => {
-                const active = link.match(pathname);
-                return (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      onClick={() => setIsSidebarOpen(false)}
-                      className={`py-3 px-5 rounded-xl text-sm md:text-base w-full inline-block transition-all duration-200 font-medium ${
-                        active
-                          ? "bg-primary text-white shadow-lg shadow-primary/20"
-                          : "text-dark hover:bg-primary/10 hover:text-primary"
-                      }`}
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+            <div className="overflow-hidden">
+              <h2 className="text-lg font-bold text-gray-900 truncate">
+                Al Amin Islam
+              </h2>
+              <p className="text-gray-500 text-sm truncate">admin@gmail.com</p>
+            </div>
           </div>
 
-          <button className="text-primary_red hover:bg-primary_red hover:text-white duration-300 w-full flex items-center gap-3 rounded-xl py-3 px-5 font-semibold transition-all">
-            <HiOutlineLogout className="rotate-180 text-xl" />
+          {/* Navigation Links */}
+          <ul className="flex-1 flex flex-col gap-2 overflow-y-auto">
+            {NAV_LINKS.map(({ name, href, icon: Icon }) => {
+              const isActive = pathname === href;
+              return (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    onClick={closeSidebar}
+                    className={`group py-3 px-4 rounded-xl text-sm md:text-base flex items-center gap-3 transition-all duration-200 font-medium ${
+                      isActive
+                        ? "bg-primary/10 text-primary shadow-sm"
+                        : "text-gray-600 hover:bg-gray-50 hover:text-primary"
+                    }`}
+                  >
+                    <Icon
+                      size={20}
+                      className={
+                        isActive
+                          ? "text-primary"
+                          : "text-gray-400 group-hover:text-primary"
+                      }
+                    />
+                    {name}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+
+          {/* Logout Button */}
+          <button
+            type="button"
+            className="mt-auto text-white bg-primary hover:bg-primary/90 duration-300 w-full flex items-center justify-between gap-3 rounded-xl py-3 px-5 font-semibold transition-transform active:scale-95"
+          >
             Logout
+            <HiOutlineLogout className="text-xl" />
           </button>
-        </div>
+        </aside>
       </div>
-    </div>
+    </nav>
   );
 };
 
