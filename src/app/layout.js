@@ -1,8 +1,9 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Techsoi BD",
-  description: "Techsoi BD",
+  title: "NextClass",
+  description:
+    "Find your tutor or student through this app smoothly and professionally.",
 };
 
 export default function RootLayout({ children }) {

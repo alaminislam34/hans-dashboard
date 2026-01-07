@@ -1,19 +1,29 @@
 "use client";
 
 import React, { useState } from "react";
-import { Mail, Lock, EyeOff, Eye } from "lucide-react";
-import Link from "next/link";
+import { Lock, EyeOff, Eye } from "lucide-react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
-const LoginPage = () => {
+const CreateNewPassword = () => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const handleUpdatePassword = (e) => {
+    e.preventDefault();
+    // Simulate password update logic
+    toast.success("Password updated successfully!");
+    router.push("/login");
+  };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 p-4">
       {/* Main Card Container */}
       <div className="w-full max-w-138 bg-white rounded-2xl shadow-sm border border-blue-100 p-8 md:p-12">
-        {/* Logo Section */}
-        <div className="flex flex-col items-center mb-8">
-          <div className="relative mb-6">
+        {/* Header/Logo Section */}
+        <div className="flex flex-col items-center mb-10">
+          <div className="relative mb-8">
             <div className="bg-primary p-4 rounded-2xl rotate-45 flex items-center justify-center w-16 h-16">
               <div className="-rotate-45">
                 <svg
@@ -27,7 +37,6 @@ const LoginPage = () => {
                 </svg>
               </div>
             </div>
-            {/* Small check badge */}
             <div className="absolute -top-1 -right-1 bg-secondary border-2 border-white rounded-full p-0.5">
               <svg
                 width="12"
@@ -44,31 +53,16 @@ const LoginPage = () => {
             </div>
           </div>
 
-          <h1 className="text-3xl font-bold text-dark mb-2">Log in</h1>
+          <h1 className="text-3xl font-bold text-dark mb-2">
+            Create new password
+          </h1>
           <p className="text-gray text-sm text-center">
-            For access your account you have to provide correct information.
+            Provide us your full information for create a new account.
           </p>
         </div>
 
         {/* Form Section */}
-        <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-          {/* Email Input */}
-          <div className="space-y-2">
-            <label className="block text-[16px] font-semibold text-dark">
-              Email
-            </label>
-            <div className="relative">
-              <span className="absolute inset-y-0 left-4 flex items-center text-gray">
-                <Mail size={20} strokeWidth={1.5} />
-              </span>
-              <input
-                type="email"
-                placeholder="Enter your email..."
-                className="w-full pl-12 pr-4 py-4 bg-[#F3F4F6] border-none rounded-xl focus:ring-2 focus:ring-primary outline-none text-dark placeholder-gray"
-              />
-            </div>
-          </div>
-
+        <form className="space-y-6" onSubmit={handleUpdatePassword}>
           {/* Password Input */}
           <div className="space-y-2">
             <label className="block text-[16px] font-semibold text-dark">
@@ -80,6 +74,7 @@ const LoginPage = () => {
               </span>
               <input
                 type={showPassword ? "text" : "password"}
+                required
                 placeholder="*******"
                 className="w-full pl-12 pr-12 py-4 bg-[#F3F4F6] border-none rounded-xl focus:ring-2 focus:ring-primary outline-none text-dark placeholder-gray"
               />
@@ -93,34 +88,44 @@ const LoginPage = () => {
             </div>
           </div>
 
-          {/* Helper Links */}
-          <div className="flex items-center justify-between text-sm">
-            <label className="flex items-center space-x-2 cursor-pointer text-gray">
-              <input
-                type="checkbox"
-                className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
-              />
-              <span>Remember me</span>
+          {/* Confirm Password Input */}
+          <div className="space-y-2">
+            <label className="block text-[16px] font-semibold text-dark">
+              Confirm Password
             </label>
-            <Link
-              href="/login/forget-pass"
-              className="text-primary font-semibold hover:underline"
-            >
-              Forgot password?
-            </Link>
+            <div className="relative">
+              <span className="absolute inset-y-0 left-4 flex items-center text-gray">
+                <Lock size={20} strokeWidth={1.5} />
+              </span>
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                required
+                placeholder="*******"
+                className="w-full pl-12 pr-12 py-4 bg-[#F3F4F6] border-none rounded-xl focus:ring-2 focus:ring-primary outline-none text-dark placeholder-gray"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute inset-y-0 right-4 flex items-center text-primary"
+              >
+                {showConfirmPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+              </button>
+            </div>
           </div>
 
           {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full py-4 bg-primary hover:bg-blue-700 text-white font-bold text-lg rounded-xl transition-all duration-200 shadow-lg shadow-blue-200"
-          >
-            Log in
-          </button>
+          <div className="pt-4">
+            <button
+              type="submit"
+              className="w-full py-4 bg-primary hover:opacity-90 text-white font-bold text-lg rounded-xl transition-all duration-200 shadow-md shadow-blue-100"
+            >
+              Update Password
+            </button>
+          </div>
         </form>
       </div>
     </div>
   );
 };
 
-export default LoginPage;
+export default CreateNewPassword;

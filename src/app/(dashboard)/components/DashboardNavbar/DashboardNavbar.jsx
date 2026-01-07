@@ -59,7 +59,7 @@ const DashboardNavbar = () => {
         <button
           type="button"
           onClick={() => setIsSidebarOpen(true)}
-          className="p-2 border border-primary/50 rounded-xl text-primary hover:bg-primary hover:text-white transition-colors duration-300 lg:hidden shrink-0"
+          className="p-2 text-primary hover:bg-primary hover:text-white transition-colors duration-300 lg:hidden shrink-0"
           aria-label="Open Menu"
         >
           <Menu size={20} />

@@ -9,14 +9,14 @@ export default function DashboardLayout({ children }) {
     <main className="flex h-screen overflow-hidden bg-white">
       <StateProvider>
         {/* Sidebar - Desktop Only */}
-        <aside className="hidden lg:block lg:w-65 xl:w-72 shrink-0 border-r border-gray-100 overflow-y-auto">
+        <aside className="hidden lg:block lg:w-67 xl:w-77 shrink-0 overflow-y-auto">
           <Sidebar />
         </aside>
 
         {/* Main Content Area */}
         <section className="flex-1 flex flex-col min-w-0 h-screen relative z-10">
           {/* Sticky Header with Padding */}
-          <header className="sticky shadow top-0 z-50 p-4 xl:p-6 pb-2 ">
+          <header className="sticky top-0 z-50 p-4 xl:p-6 pb-2">
             <DashboardNavbar />
           </header>
 

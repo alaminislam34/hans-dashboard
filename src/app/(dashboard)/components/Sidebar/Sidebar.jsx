@@ -1,5 +1,9 @@
 "use client";
 
+import React from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Users,
   FileText,
@@ -8,97 +12,129 @@ import {
   Settings,
   LayoutGrid,
 } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { HiOutlineLogout } from "react-icons/hi";
-const sidelinks = [
+
+const SIDELINKS = [
   {
     name: "Dashboard",
-    icon: <LayoutGrid />,
+    icon: <LayoutGrid size={22} />,
     href: "/dashboard",
-    match: (pathname) =>
-      pathname === "/dashboard" || /^\/dashboard\/\d+$/.test(pathname),
+    match: (path) => path === "/dashboard" || /^\/dashboard\/\d+$/.test(path),
   },
   {
     name: "Tutor Verification",
-    icon: <IdCard />,
+    icon: <IdCard size={22} />,
     href: "/dashboard/tutor_verify",
-    match: (pathname) => pathname.startsWith("/dashboard/tutor_verify"),
+    match: (path) => path.startsWith("/dashboard/tutor_verify"),
   },
   {
     name: "User Management",
-    icon: <Users />,
+    icon: <Users size={22} />,
     href: "/dashboard/users_manage",
-    match: (pathname) => pathname.startsWith("/dashboard/users_manage"),
+    match: (path) => path.startsWith("/dashboard/users_manage"),
   },
   {
     name: "Review Management",
-    icon: <FileText />,
+    icon: <FileText size={22} />,
     href: "/dashboard/review_manage",
-    match: (pathname) => pathname.startsWith("/dashboard/review_manage"),
+    match: (path) => path.startsWith("/dashboard/review_manage"),
   },
   {
     name: "Support Management",
-    icon: <Smartphone />,
+    icon: <Smartphone size={22} />,
     href: "/dashboard/support_manage",
-    match: (pathname) => pathname.startsWith("/dashboard/support_manage"),
+    match: (path) => path.startsWith("/dashboard/support_manage"),
   },
   {
     name: "System Settings",
-    icon: <Settings />,
+    icon: <Settings size={22} />,
     href: "/dashboard/system_settings",
-    match: (pathname) => pathname.startsWith("/dashboard/system_settings"),
+    match: (path) => path.startsWith("/dashboard/system_settings"),
   },
 ];
 
 const Sidebar = () => {
   const pathname = usePathname();
 
+  const handleLogout = () => {
+    // Add your logout logic here
+    console.log("Logging out...");
+  };
+
   return (
-    <div className="lg:w-65 xl:w-72 border-r border-gray-300 h-screen flex justify-between flex-col fixed left-0 top-0 p-6">
-      <div>
-        <div className="flex items-center gap-4 mt-6 mb-12">
-          <Image
-            src="/images/user.jpg"
-            height={400}
-            width={600}
-            alt="user image"
-            className="w-14 rounded-lg aspect-square object-cover"
-          />
-          <div className="flex flex-col gap-1">
-            <h2 className="md:text-lg font-bold text-black">Al Amin Islam</h2>
-            <p className="text-gray text-sm md:text-base">admin@gmail.com</p>
+    <aside className="fixed left-0 top-0 h-screen lg:w-67 xl:w-77">
+      <div className="h-full p-4">
+        <div className="flex flex-col justify-between p-6 bg-[#F8FBFF] transition-all rounded-2xl h-full">
+          <div>
+            {/* User Profile Section */}
+            <div className="flex items-center gap-4 mt-6 mb-10">
+              <div className="relative w-12 h-12 overflow-hidden rounded-lg border border-gray-100">
+                <Image
+                  src="/images/user.jpg"
+                  fill
+                  priority
+                  sizes="48px"
+                  alt="Admin Profile"
+                  className="object-cover"
+                />
+              </div>
+              <div className="flex flex-col min-w-0">
+                <h2 className="text-sm md:text-base font-bold text-slate-900 truncate">
+                  Al Amin Islam
+                </h2>
+                <p className="text-xs md:text-sm text-gray-500 truncate">
+                  admin@gmail.com
+                </p>
+              </div>
+            </div>
+
+            <nav>
+              <ul className="flex flex-col gap-2">
+                {SIDELINKS.map((link) => {
+                  const isActive = link.match(pathname);
+
+                  return (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className={`
+                      group flex items-center gap-3 px-4 py-3 rounded-xl text-sm md:text-base font-medium transition-all duration-200
+                      ${
+                        isActive
+                          ? "bg-blue-50 text-primary shadow-sm ring-1 ring-blue-100"
+                          : "text-gray-600 hover:bg-gray-50 hover:text-primary"
+                      }
+                    `}
+                      >
+                        <span
+                          className={`${
+                            isActive
+                              ? "text-primary"
+                              : "text-gray-400 group-hover:text-primary"
+                          }`}
+                        >
+                          {link.icon}
+                        </span>
+                        {link.name}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
           </div>
+
+          {/* Logout Action */}
+          <button
+            onClick={handleLogout}
+            className="flex items-center justify-between w-full px-5 py-3 mt-auto font-semibold text-white transition-all rounded-xl bg-primary hover:bg-blue-700 hover:shadow-lg active:scale-95 group"
+          >
+            <span>Logout</span>
+            <HiOutlineLogout className="text-xl transition-transform group-hover:translate-x-1" />
+          </button>
         </div>
-
-        <ul className="flex flex-col gap-3">
-          {sidelinks.map((link) => {
-            const active = link.match(pathname);
-            return (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  onClick={() => setIsSidebarOpen(false)}
-                  className={`py-3 px-5 rounded-xl text-sm md:text-base w-full flex items-center gap-2 transition-all duration-200 hover:scale-102 font-medium ${
-                    active
-                      ? "shadow-[-4px_0px_4px_0px_#8DB0FF40,4px_0px_4px_0px_#8DB0FF40] text-primary"
-                      : "text-gray hover:shadow-[-4px_0px_4px_0px_#8DB0FF40,4px_0px_4px_0px_#8DB0FF40] hover:text-primary"
-                  }`}
-                >
-                  {link.icon} {link.name}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
       </div>
-
-      <button className="text-white bg-primary duration-300 w-full flex items-center justify-between gap-3 rounded-xl py-3 px-5 font-semibold transition-all hover:scale-102">
-        Logout
-        <HiOutlineLogout className="text-xl" />
-      </button>
-    </div>
+    </aside>
   );
 };
 
