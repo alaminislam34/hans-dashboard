@@ -12,7 +12,8 @@ const Stats = () => {
         </p>
       </div>
       <div className="grid grid-cols-2 gap-6 items-center">
-        <div className="rounded-xl bg-[#B3E59F1A] p-4 flex flex-col items-center justify-center gap-2">
+        <div className="rounded-xl bg-[#B3E59F1A] p-4 flex flex-col overflow-hidden items-center justify-center gap-2 relative">
+          <div className="bg-green-100 absolute -top-40 -z-40 opacity-50 md:opacity-100 -right-30 md:w-80 w-40 md:h-50 h-30 -rotate-45 rounded-full"></div>
           <svg
             width="40"
             height="35"
@@ -136,7 +137,8 @@ const Stats = () => {
           <p className="text-gray md:text-lg">Total Parent User</p>
           <h1 className="text-lg md:text-2xl font-bold">10204</h1>
         </div>
-        <div className="rounded-xl bg-[#F4D4931A] p-4 flex flex-col items-center justify-center gap-2">
+        <div className="rounded-xl bg-[#F4D4931A] p-4 flex flex-col overflow-hidden items-center justify-center gap-2 relative">
+          <div className="bg-yellow-100 absolute -top-40 -z-40 opacity-50 md:opacity-100 -right-30 md:w-80 w-40 md:h-50 h-30 -rotate-45 rounded-full"></div>
           <svg
             width="40"
             height="35"

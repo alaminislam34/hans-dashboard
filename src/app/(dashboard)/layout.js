@@ -16,7 +16,7 @@ export default function DashboardLayout({ children }) {
         {/* Main Content Area */}
         <section className="flex-1 flex flex-col min-w-0 h-screen relative z-10">
           {/* Sticky Header with Padding */}
-          <header className="sticky top-0 z-50 p-4 xl:p-6 pb-2">
+          <header className="sticky top-0 border-b border-b-gray-100 z-50 p-4 pb-2">
             <DashboardNavbar />
           </header>
 
