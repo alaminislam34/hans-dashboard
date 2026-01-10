@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Users,
   FileText,
@@ -13,6 +13,7 @@ import {
   LayoutGrid,
 } from "lucide-react";
 import { HiOutlineLogout } from "react-icons/hi";
+import toast from "react-hot-toast";
 
 const SIDELINKS = [
   {
@@ -55,10 +56,14 @@ const SIDELINKS = [
 
 const Sidebar = () => {
   const pathname = usePathname();
+  const router = useRouter();
 
   const handleLogout = () => {
     // Add your logout logic here
-    console.log("Logging out...");
+    toast.success("Logout successful");
+    setTimeout(() => {
+      router.push("/login");
+    }, 1000);
   };
 
   return (

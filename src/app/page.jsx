@@ -9,7 +9,7 @@ const WelcomeSimple = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       router.push("/dashboard");
-    }, 2000);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, [router]);

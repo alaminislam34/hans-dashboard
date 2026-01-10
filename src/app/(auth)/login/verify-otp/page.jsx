@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import React, { useRef, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 
 const VerifyOTP = () => {
   // Array to hold the 6-digit OTP values
@@ -26,6 +27,14 @@ const VerifyOTP = () => {
   const handleKeyDown = (e, index) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
+    }
+  };
+  const handleVerifyCode = async () => {
+    console.log("hello");
+    if (!otp) {
+      toast.error("Otp verify failed!");
+    } else {
+      toast.success("OTP Verify Success");
     }
   };
 
@@ -105,7 +114,10 @@ const VerifyOTP = () => {
 
         {/* Action Buttons */}
         <div className="space-y-4">
-          <button className="w-full py-4 bg-primary hover:bg-blue-700 text-white font-bold text-lg rounded-xl transition-all duration-200 shadow-lg shadow-blue-100">
+          <button
+            onClick={handleVerifyCode}
+            className="w-full py-4 bg-primary hover:bg-blue-700 text-white font-bold text-lg rounded-xl transition-all duration-200 shadow-lg shadow-blue-100"
+          >
             Submit
           </button>
 
@@ -117,6 +129,7 @@ const VerifyOTP = () => {
           </Link>
         </div>
       </div>
+      <Toaster position="top-center" />
     </div>
   );
 };
