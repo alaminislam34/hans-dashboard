@@ -7,7 +7,7 @@ const reviewsData = [
     tutor_name: "Arif Hossain",
     rating: 5,
     review: "Excellent tutor. Very patient and explains concepts clearly.",
-    status: "approved",
+    status: "Approved",
   },
   {
     id: 2,
@@ -15,7 +15,7 @@ const reviewsData = [
     tutor_name: "Nusrat Jahan",
     rating: 4,
     review: "My child improved a lot. Classes were well organized.",
-    status: "approved",
+    status: "Approved",
   },
   {
     id: 3,
@@ -23,7 +23,7 @@ const reviewsData = [
     tutor_name: "Imran Khan",
     rating: 5,
     review: "Highly professional and very friendly with students.",
-    status: "approved",
+    status: "Approved",
   },
   {
     id: 4,
@@ -31,7 +31,7 @@ const reviewsData = [
     tutor_name: "Sadia Islam",
     rating: 3,
     review: "Teaching was good but timing was sometimes irregular.",
-    status: "pending",
+    status: "Pending",
   },
   {
     id: 5,
@@ -39,7 +39,7 @@ const reviewsData = [
     tutor_name: "Tanvir Ahmed",
     rating: 4,
     review: "Good tutor with strong subject knowledge.",
-    status: "approved",
+    status: "Approved",
   },
   {
     id: 6,
@@ -47,7 +47,7 @@ const reviewsData = [
     tutor_name: "Mehedi Hasan",
     rating: 2,
     review: "Communication could be better. Not fully satisfied.",
-    status: "rejected",
+    status: "Rejected",
   },
   {
     id: 7,
@@ -55,7 +55,7 @@ const reviewsData = [
     tutor_name: "Ayesha Akter",
     rating: 5,
     review: "Very caring and attentive. My child loves the classes.",
-    status: "approved",
+    status: "Approved",
   },
   {
     id: 8,
@@ -63,7 +63,7 @@ const reviewsData = [
     tutor_name: "Sabbir Rahman",
     rating: 4,
     review: "Explains topics in an easy way. Recommended.",
-    status: "approved",
+    status: "Approved",
   },
   {
     id: 9,
@@ -71,7 +71,7 @@ const reviewsData = [
     tutor_name: "Rima Sultana",
     rating: 3,
     review: "Average experience. Teaching style is okay.",
-    status: "pending",
+    status: "Pending",
   },
   {
     id: 10,
@@ -79,7 +79,7 @@ const reviewsData = [
     tutor_name: "Shakil Ahmed",
     rating: 5,
     review: "Outstanding teaching and great discipline.",
-    status: "approved",
+    status: "Approved",
   },
   {
     id: 11,
@@ -87,7 +87,7 @@ const reviewsData = [
     tutor_name: "Farhana Yasmin",
     rating: 4,
     review: "Very professional and punctual.",
-    status: "approved",
+    status: "Approved",
   },
   {
     id: 12,
@@ -95,7 +95,7 @@ const reviewsData = [
     tutor_name: "Rakib Hossain",
     rating: 2,
     review: "Needs improvement in explaining difficult topics.",
-    status: "rejected",
+    status: "Rejected",
   },
   {
     id: 13,
@@ -103,7 +103,7 @@ const reviewsData = [
     tutor_name: "Naimur Rahman",
     rating: 5,
     review: "Excellent tutor. Strongly recommended.",
-    status: "approved",
+    status: "Approved",
   },
   {
     id: 14,
@@ -111,7 +111,7 @@ const reviewsData = [
     tutor_name: "Jannatul Ferdous",
     rating: 4,
     review: "Friendly behavior and good teaching skills.",
-    status: "approved",
+    status: "Approved",
   },
   {
     id: 15,
@@ -119,7 +119,7 @@ const reviewsData = [
     tutor_name: "Kamrul Islam",
     rating: 3,
     review: "Decent tutor but could be more engaging.",
-    status: "pending",
+    status: "Pending",
   },
   {
     id: 16,
@@ -127,7 +127,7 @@ const reviewsData = [
     tutor_name: "Sumi Akter",
     rating: 5,
     review: "Very supportive and dedicated tutor.",
-    status: "approved",
+    status: "Approved",
   },
   {
     id: 17,
@@ -135,7 +135,7 @@ const reviewsData = [
     tutor_name: "Omar Faruk",
     rating: 4,
     review: "Good teaching but sometimes classes run late.",
-    status: "approved",
+    status: "Approved",
   },
   {
     id: 18,
@@ -143,7 +143,7 @@ const reviewsData = [
     tutor_name: "Tahmina Rahman",
     rating: 5,
     review: "Amazing tutor with great teaching methods.",
-    status: "approved",
+    status: "Approved",
   },
   {
     id: 19,
@@ -151,7 +151,7 @@ const reviewsData = [
     tutor_name: "Ashiqur Rahman",
     rating: 3,
     review: "Teaching is fine but needs better communication.",
-    status: "pending",
+    status: "Pending",
   },
   {
     id: 20,
@@ -159,7 +159,7 @@ const reviewsData = [
     tutor_name: "Lubna Chowdhury",
     rating: 5,
     review: "Highly qualified and very professional tutor.",
-    status: "approved",
+    status: "Approved",
   },
 ];
 
@@ -167,12 +167,20 @@ import React, { useState } from "react";
 import { Eye, Star } from "lucide-react";
 import Image from "next/image";
 import DataTable from "../components/CommonTable";
+import ReviewDetailModal from "./components/ReviewModal";
 
 const ReviewManage = () => {
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState("All");
+  const [showModal, setShowModal] = useState(false);
+  const [selectedReview, setSelectedReview] = useState(null);
+
+  const handleViewDetails = (row) => {
+    setSelectedReview(row);
+    setShowModal(true);
+  };
 
   const filteredData = reviewsData.filter((item) =>
-    activeTab === "all" ? true : item.status === activeTab
+    activeTab === "All" ? true : item.status === activeTab
   );
 
   const columns = [
@@ -222,9 +230,9 @@ const ReviewManage = () => {
       render: (row) => (
         <span
           className={`px-4 py-1 rounded-full text-sm font-medium capitalize ${
-            row.status === "approved"
+            row.status === "Approved"
               ? "bg-[#E7F8F0] text-[#00B69B]"
-              : row.status === "rejected"
+              : row.status === "Rejected"
               ? "bg-[#FFF0F0] text-[#F93333]"
               : "bg-[#FFF7E6] text-[#FFA70B]"
           }`}
@@ -237,7 +245,10 @@ const ReviewManage = () => {
       header: "Action",
       align: "center",
       render: (row) => (
-        <button className="text-[#3BA6E7] hover:scale-110 transition-all">
+        <button
+          onClick={() => handleViewDetails(row)}
+          className="text-[#3BA6E7] hover:scale-110 transition-all"
+        >
           <Eye size={20} />
         </button>
       ),
@@ -251,7 +262,7 @@ const ReviewManage = () => {
           <h1 className="text-xl font-bold text-[#202224]">Select options</h1>
 
           <div className="flex gap-6 text-sm font-medium text-gray">
-            {["all", "pending", "approved", "rejected"].map((tab) => (
+            {["All", "Pending", "Approved", "Rejected"].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -275,6 +286,12 @@ const ReviewManage = () => {
           />
         </div>
       </div>
+      {showModal && (
+        <ReviewDetailModal
+          close={() => setShowModal(false)}
+          review={selectedReview}
+        />
+      )}
     </div>
   );
 };
