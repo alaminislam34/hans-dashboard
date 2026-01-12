@@ -181,12 +181,13 @@ const TutorManage = () => {
           ))}
         </div>
       </div>
-
-      <DataTable
-        columns={columns}
-        data={filteredTutors}
-        emptyMessage="No tutors found in this category."
-      />
+      <div className="bg-white rounded-[15px] shadow-sm overflow-hidden border border-gray-100">
+        <DataTable
+          columns={columns}
+          data={filteredTutors}
+          emptyMessage="No tutors found in this category."
+        />
+      </div>
 
       {/* ৩. Modal-e data pathano hocche props hishebe */}
       {showModal && (
