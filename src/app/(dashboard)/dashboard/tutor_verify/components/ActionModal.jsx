@@ -1,43 +1,58 @@
 "use client";
 
 import React, { useState } from "react";
-import { Download } from "lucide-react";
+import { Download, X } from "lucide-react";
 import Image from "next/image";
 
-const UserInfoModal = ({ setShowModal }) => {
+const UserInfoModal = ({ setShowModal, userData }) => {
   const [isRejecting, setIsRejecting] = useState(false);
+
+  const { name, email, status, location, education, teaching_time, image_url } =
+    userData || {};
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-      <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden">
+      <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden relative">
+        <button
+          onClick={() => setShowModal(false)}
+          className="absolute right-4 top-4 text-gray-400 hover:text-dark z-10"
+        >
+          <X size={24} />
+        </button>
+
         {!isRejecting ? (
-          /* --- User Information Modal (Image 1) --- */
+          /* --- User Information Modal --- */
           <div className="p-6 md:p-10">
             {/* Profile Image */}
             <div className="flex justify-center mb-6">
-              <div className="w-36 h-36 md:w-44 md:h-44 rounded-2xl overflow-hidden relative border">
+              <div className="">
                 <Image
-                  src="/images/user.jpg"
-                  fill
+                  src={image_url || `/images/user.png`}
+                  height={400}
+                  width={400}
                   alt="Tutor Profile"
-                  className="object-cover"
+                  className="w-32 h-32 rounded-xl object-cover border"
                 />
               </div>
             </div>
 
-            <h2 className="text-2xl font-bold text-center text-dark mb-8">
+            <h2 className="text-2xl font-bold text-center text-dark mb-6">
               User information
             </h2>
 
-            {/* Details List */}
-            <div className="space-y-4 mb-8">
-              <DetailRow label="Tutor name" value="Anderson Jonse" />
-              <DetailRow label="Email" value="alex2589@gmail.com" />
-              <DetailRow label="Location" value="31/2 Los Angles, USA" />
+            {/* Details List - Data mapping from userData */}
+            <div className="space-y-2 mb-6">
+              <DetailRow label="Tutor name" value={name || "N/A"} />
+              <DetailRow label="Email" value={email || "N/A"} />
+              <DetailRow
+                label="Location"
+                value={location || "Location not provided"}
+              />
               <DetailRow
                 label="Teaching time"
-                value="05/12/2000 - Currently teaching"
+                value={teaching_time || "Not specified"}
               />
+              <DetailRow label="Current Status" value={status || "N/A"} />
             </div>
 
             {/* Certification */}
@@ -45,14 +60,16 @@ const UserInfoModal = ({ setShowModal }) => {
               <p className="text-dark font-medium mb-3">
                 Certification (NIE cert, ABRSM)
               </p>
-              <div className="relative w-full max-w-64 rounded-lg border border-gray/20 overflow-hidden">
-                <img
-                  src="https://images.unsplash.com/photo-1606326666490-4e7353b341c2"
-                  alt="Certificate"
-                  className="w-full h-24 object-cover opacity-80"
+              <div className="relative w-full max-w-64 min-h-20 rounded-lg border border-gray/20 overflow-hidden group cursor-pointer">
+                <Image
+                  src={"/images/certificate.jpg"}
+                  height={500}
+                  width={300}
+                  alt="Certificate Image"
+                  className="h-24 w-full object-cover bg-cover"
                 />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="bg-white/90 p-2 rounded-full shadow-sm text-dark">
+                  <div className="bg-white/90 p-2 rounded-full shadow-sm text-dark hover:scale-110 transition-transform">
                     <Download size={18} />
                   </div>
                 </div>
@@ -65,56 +82,84 @@ const UserInfoModal = ({ setShowModal }) => {
                 Personal education level
               </p>
               <p className="text-gray text-sm">
-                Complete graduation from dot university in science
+                {education || "Education details not available."}
               </p>
+              {status === "Rejected" ? (
+                <>
+                  <p className="text-dark font-medium mb-1 mt-3">
+                    Cause for reject
+                  </p>
+                  <p className="text-gray text-sm">The file is incorrect.</p>
+                </>
+              ) : (
+                ""
+              )}
             </div>
 
-            {/* Buttons */}
-            <div className="grid grid-cols-2 gap-4 mb-3">
+            {["Approved", "Rejected"].includes(status) ? (
               <button
-                onClick={() => setIsRejecting(true)}
-                className="py-3 rounded-xl border border-primary_red text-primary_red font-bold hover:bg-red-50"
+                onClick={() => {
+                  console.log("Approved:", name);
+                  setShowModal(false);
+                }}
+                className="py-3 rounded-xl bg-linear-to-br from-primary/70 to-primary text-white font-bold shadow-md transition-colors w-full"
               >
-                Reject
+                Close
               </button>
-              <button
-                onClick={() => setShowModal(false)}
-                className="py-3 rounded-xl bg-primary text-white font-bold shadow-md"
-              >
-                Approve
-              </button>
-            </div>
-
-            <button
-              onClick={() => setShowModal(false)}
-              className="w-full py-3 rounded-xl border border-primary text-primary font-bold hover:bg-blue-50"
-            >
-              Close
-            </button>
+            ) : (
+              <div className="grid grid-cols-2 gap-4 mb-3">
+                <button
+                  onClick={() => setIsRejecting(true)}
+                  className="py-3 rounded-xl border border-[#FF4D4D] text-[#FF4D4D] font-bold hover:bg-red-50 transition-colors"
+                >
+                  Reject
+                </button>
+                <button
+                  onClick={() => {
+                    console.log("Approved:", name);
+                    setShowModal(false);
+                  }}
+                  className="py-3 rounded-xl bg-linear-to-br from-primary/70 to-primary text-white font-bold shadow-md transition-colors"
+                >
+                  Approve
+                </button>
+              </div>
+            )}
           </div>
         ) : (
-          /* --- Rejection Reason Modal (Image 2) --- */
-          <div className="p-8 md:p-12 animate-in fade-in duration-300">
-            <h2 className="text-3xl font-bold text-center text-dark mb-10">
+          /* --- Rejection Reason Modal --- */
+          <div className="p-4 md:p-6 lg:p-8 animate-in fade-in zoom-in duration-300">
+            <h2 className="text-3xl font-bold text-center text-dark mb-6">
               Rejection
             </h2>
 
-            <div className="mb-8">
-              <label className="block text-xl font-bold text-dark mb-4">
+            <div className="mb-6">
+              <label className="block lg:text-lg font-semibold text-dark mb-4">
                 Reason for rejecting
               </label>
               <textarea
-                placeholder="Write here.."
-                className="w-full h-40 p-4 bg-[#F4F7FE] rounded-2xl border-none outline-none resize-none text-gray"
+                placeholder="Write reason here.."
+                className="w-full h-40 p-4 bg-[#F4F7FE] rounded-2xl border-none outline-none resize-none text-dark focus:ring-2 focus:ring-primary/20"
               />
             </div>
 
-            <button
-              onClick={() => setShowModal(false)}
-              className="w-full py-4 rounded-xl bg-linear-to-b from-primary to-[#1E3A8A] text-white text-xl font-bold shadow-lg"
-            >
-              Done
-            </button>
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => {
+                  console.log("Rejected:", name);
+                  setShowModal(false);
+                }}
+                className="w-full py-4 rounded-xl bg-linear-to-b from-[#32afe2] to-[#1E3A8A] text-white text-xl font-bold shadow-lg active:scale-[0.98] transition-transform"
+              >
+                Done
+              </button>
+              <button
+                onClick={() => setIsRejecting(false)}
+                className="text-gray-500 font-medium hover:text-dark"
+              >
+                Back to Info
+              </button>
+            </div>
           </div>
         )}
       </div>

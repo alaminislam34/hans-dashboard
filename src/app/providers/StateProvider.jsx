@@ -1,22 +1,37 @@
 "use client";
 
-import React, { createContext, useContext, useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
-// 1. Create the Context
 const AppContext = createContext(undefined);
 
-// 2. Create the Provider Component
 export const StateProvider = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isLogin, setIsLogin] = useState(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const storedLogin = localStorage.getItem("login");
+    const loginStatus = storedLogin ? JSON.parse(storedLogin) : false;
+
+    setIsLogin(loginStatus);
+
+    if (loginStatus) {
+      router.push("/dashboard");
+    } else {
+      router.push("/login");
+    }
+  }, [router]);
+
   const value = {
     isSidebarOpen,
     setIsSidebarOpen,
+    isLogin,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 
-// 3. Create a Custom Hook for easy consumption
 export const useGlobalState = () => {
   const context = useContext(AppContext);
   if (!context) {

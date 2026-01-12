@@ -61,6 +61,7 @@ const Sidebar = () => {
   const handleLogout = () => {
     // Add your logout logic here
     toast.success("Logout successful");
+    localStorage.removeItem("login");
     setTimeout(() => {
       router.push("/login");
     }, 1000);

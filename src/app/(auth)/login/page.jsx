@@ -3,9 +3,35 @@
 import React, { useState } from "react";
 import { Mail, Lock, EyeOff, Eye } from "lucide-react";
 import Link from "next/link";
+import toast, { Toaster } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+  const handleLogin = (e) => {
+    e.preventDefault();
+    try {
+      if (!email || !password) {
+        toast.error("Email or Password are required");
+      }
+      if (email === "admin@gmail.com" && password === "123") {
+        toast.success("Logged in Successful");
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 1000);
+        JSON.stringify(localStorage.setItem("login", true));
+        setEmail("");
+        setPassword("");
+      } else {
+        toast.error("Incorrect email or password");
+      }
+    } catch (error) {
+      toast.error(error.message || "Something went wrong!");
+    }
+  };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 p-4">
@@ -51,7 +77,7 @@ const LoginPage = () => {
         </div>
 
         {/* Form Section */}
-        <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+        <form className="space-y-6" onSubmit={handleLogin}>
           {/* Email Input */}
           <div className="space-y-2">
             <label className="block text-[16px] font-semibold text-dark">
@@ -62,7 +88,10 @@ const LoginPage = () => {
                 <Mail size={20} strokeWidth={1.5} />
               </span>
               <input
+                required
                 type="email"
+                value={email}
+                onChange={(v) => setEmail(v.target.value)}
                 placeholder="Enter your email..."
                 className="w-full pl-12 pr-4 py-4 bg-[#F3F4F6] border-none rounded-xl focus:ring-2 focus:ring-primary outline-none text-dark placeholder-gray"
               />
@@ -79,6 +108,8 @@ const LoginPage = () => {
                 <Lock size={20} strokeWidth={1.5} />
               </span>
               <input
+                value={password}
+                onChange={(v) => setPassword(v.target.value)}
                 type={showPassword ? "text" : "password"}
                 placeholder="*******"
                 className="w-full pl-12 pr-12 py-4 bg-[#F3F4F6] border-none rounded-xl focus:ring-2 focus:ring-primary outline-none text-dark placeholder-gray"
@@ -119,6 +150,7 @@ const LoginPage = () => {
           </button>
         </form>
       </div>
+      <Toaster position="top-center" />
     </div>
   );
 };
