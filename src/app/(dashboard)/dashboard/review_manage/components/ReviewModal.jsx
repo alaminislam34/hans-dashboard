@@ -67,15 +67,26 @@ const ReviewDetailModal = ({ review, close }) => {
 
           {review.status === "Rejected" || review.status === "Pending" ? (
             <div className="flex flex-col gap-4">
-              <button
-                onClick={() => {
-                  console.log("Approving Review ID:", review.id);
-                  close();
-                }}
-                className="w-full py-2.5 rounded-xl bg-linear-to-b from-primary to-[#1E3A8A] text-white shadow-lg active:scale-[0.98] transition-all"
-              >
-                Approve Review
-              </button>
+              <div className="flex flex-row gap-2 items-center">
+                <button
+                  onClick={() => {
+                    console.log("Approving Review ID:", review.id);
+                    close();
+                  }}
+                  className="w-full py-2.5 rounded-xl bg-linear-to-b from-red-300/10 to-red-500/10 text-red-600 border border-red-500 shadow-lg active:scale-[0.98] transition-all"
+                >
+                  Reject
+                </button>
+                <button
+                  onClick={() => {
+                    console.log("Approving Review ID:", review.id);
+                    close();
+                  }}
+                  className="w-full py-2.5 rounded-xl bg-linear-to-b from-primary to-[#1E3A8A] text-white shadow-lg active:scale-[0.98] transition-all"
+                >
+                  Approve Review
+                </button>
+              </div>
 
               <button
                 onClick={close}
