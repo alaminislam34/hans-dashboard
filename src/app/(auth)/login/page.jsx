@@ -5,31 +5,56 @@ import { Mail, Lock, EyeOff, Eye } from "lucide-react";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import { LOGIN_API } from "@/api/ApiEndPoint";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("shohagmony781@gmail.com");
+  const [password, setPassword] = useState("123");
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
-  const handleLogin = (e) => {
+
+  const handleLogin = async (e) => {
     e.preventDefault();
+
     try {
       if (!email || !password) {
         toast.error("Email or Password are required");
+        return;
       }
-      if (email === "admin@gmail.com" && password === "123") {
-        toast.success("Logged in Successful");
+
+      const res = await axios.post(LOGIN_API, { email, password });
+
+      if (res.status === 200) {
+        toast.success("Logged in Successfully");
+
+        localStorage.setItem(
+          "token",
+          JSON.stringify({
+            accessToken: res.data.tokens.access,
+            refreshToken: res.data.tokens.refresh,
+          })
+        );
+        localStorage.setItem(
+          "admin",
+          JSON.stringify({
+            name: "Super Admin",
+            email: res.data.user.email,
+            image: res.data.user.profile_picture,
+          })
+        );
+
+        setEmail("");
+        setPassword("");
+
         setTimeout(() => {
           router.push("/dashboard");
         }, 1000);
-        JSON.stringify(localStorage.setItem("login", true));
-        setEmail("");
-        setPassword("");
       } else {
-        toast.error("Incorrect email or password");
+        toast.error("Wrong credentials");
       }
     } catch (error) {
-      toast.error(error.message || "Something went wrong!");
+      toast.error(error?.response?.data?.message || "Something went wrong!");
     }
   };
 

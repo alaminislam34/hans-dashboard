@@ -2,8 +2,10 @@
 
 const SystemSettings = () => {
   return (
-    <div>
-      <h1>SystemSettings</h1>
+    <div className="border">
+      <div>
+        
+      </div>
     </div>
   );
 };
