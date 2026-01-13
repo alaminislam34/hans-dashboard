@@ -2,7 +2,6 @@
 
 import { useRouter, usePathname } from "next/navigation";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import toast from "react-hot-toast";
 
 const AppContext = createContext(undefined);
 
@@ -16,78 +15,64 @@ export const StateProvider = ({ children }) => {
   const pathname = usePathname();
 
   useEffect(() => {
-    const checkAuth = () => {
-      try {
-        const tokenStr = localStorage.getItem("token");
-        const adminStr = localStorage.getItem("admin");
+    try {
+      const token = localStorage.getItem("token");
+      const admin = localStorage.getItem("admin");
 
-        // Not logged in
-        if (!tokenStr || !adminStr) {
-          setIsLogin(false);
-          setUser(null);
-
-          if (pathname !== "/login") {
-            router.replace("/login");
-            toast.error("Session expired");
-          }
-          return;
-        }
-
-        const token = JSON.parse(tokenStr);
-        const admin = JSON.parse(adminStr);
-
-        if (!token?.accessToken) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("admin");
-
-          setIsLogin(false);
-          setUser(null);
-
-          router.replace("/login");
-          toast.error("Session expired");
-          return;
-        }
-
-        // Logged in
-        setIsLogin(true);
-        setUser(admin);
-
-        if (pathname === "/login") {
-          router.replace("/dashboard");
-        }
-      } catch (err) {
-        console.error("Auth check failed:", err);
-
-        localStorage.removeItem("token");
-        localStorage.removeItem("admin");
-
+      if (!token || !admin) {
         setIsLogin(false);
         setUser(null);
-        router.replace("/login");
-      } finally {
-        setAuthLoading(false);
-      }
-    };
 
-    checkAuth();
+        if (pathname !== "/login") {
+          router.replace("/login");
+        }
+        return;
+      }
+
+      const parsedToken = JSON.parse(token);
+
+      if (!parsedToken?.accessToken) {
+        localStorage.clear();
+        setIsLogin(false);
+        router.replace("/login");
+        return;
+      }
+
+      setIsLogin(true);
+      setUser(JSON.parse(admin));
+
+      if (pathname === "/login") {
+        router.replace("/dashboard");
+      }
+    } catch (err) {
+      console.error("Auth error:", err);
+      localStorage.clear();
+      router.replace("/login");
+    } finally {
+      setAuthLoading(false);
+    }
   }, [pathname, router]);
 
-  const value = {
-    isSidebarOpen,
-    setIsSidebarOpen,
-    isLogin,
-    setIsLogin,
-    authLoading,
-    user,
-  };
-
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  return (
+    <AppContext.Provider
+      value={{
+        isSidebarOpen,
+        setIsSidebarOpen,
+        isLogin,
+        setIsLogin,
+        authLoading,
+        user,
+      }}
+    >
+      {children}
+    </AppContext.Provider>
+  );
 };
 
 export const useGlobalState = () => {
   const context = useContext(AppContext);
   if (!context) {
-    throw new Error("useGlobalState must be used within StateProvider");
+    throw new Error("useGlobalState must be used inside StateProvider");
   }
   return context;
 };

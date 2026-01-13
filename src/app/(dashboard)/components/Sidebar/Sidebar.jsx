@@ -79,7 +79,7 @@ const Sidebar = () => {
             <div className="flex items-center gap-4 mt-6 mb-10">
               <div className="relative w-12 h-12 overflow-hidden rounded-lg border border-gray-100">
                 <Image
-                  src={user.image || "/images/user.jpg"}
+                  src={user?.image ? user?.image : "/images/user.jpg"}
                   fill
                   priority
                   sizes="48px"
@@ -89,10 +89,10 @@ const Sidebar = () => {
               </div>
               <div className="flex flex-col min-w-0">
                 <h2 className="text-sm md:text-base font-bold text-slate-900 truncate">
-                  {user.name ? user.name : "Al Amin Islam"}
+                  {user?.name ? user?.name : "Al Amin Islam"}
                 </h2>
                 <p className="text-xs md:text-sm text-gray-500 truncate">
-                  {user.email ? user.email : "admin@gmail.com"}
+                  {user?.email ? user?.email : "admin@gmail.com"}
                 </p>
               </div>
             </div>
