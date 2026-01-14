@@ -1,14 +1,56 @@
 "use client";
 
 import React, { useState } from "react";
-import { Download, X } from "lucide-react";
+import { X } from "lucide-react";
 import Image from "next/image";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import api from "@/lib/Api";
+import toast from "react-hot-toast";
 
 const UserInfoModal = ({ setShowModal, userData }) => {
   const [isRejecting, setIsRejecting] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
+  const queryClient = useQueryClient();
 
-  const { name, email, status, location, education, teaching_time, image_url } =
-    userData || {};
+  const {
+    id: user_id,
+    full_name,
+    username,
+    email,
+    profile_picture,
+    profile,
+  } = userData || {};
+
+  const tutor_profile_id = profile?.id;
+  const status = profile?.verification_status;
+
+  // ================= MUTATION LOGIC =================
+  const mutation = useMutation({
+    mutationFn: async ({ action, reason }) => {
+      if (action === "ACTIVATE") {
+        return await api.post("/api/accounts/admin/dashboard/activate_user/", {
+          user_id: user_id,
+        });
+      } else {
+        return await api.post("/api/accounts/admin/dashboard/reject_tutor/", {
+          tutor_profile_id: tutor_profile_id,
+          notes: reason,
+        });
+      }
+    },
+    onSuccess: (_, variables) => {
+      const isApprove = variables.action === "ACTIVATE";
+      toast.success(
+        isApprove ? "Tutor activated successfully!" : "Tutor rejected."
+      );
+
+      queryClient.invalidateQueries({ queryKey: ["tutors"] });
+      setShowModal(false);
+    },
+    onError: (error) => {
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    },
+  });
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
@@ -21,143 +63,94 @@ const UserInfoModal = ({ setShowModal, userData }) => {
         </button>
 
         {!isRejecting ? (
-          /* --- User Information Modal --- */
           <div className="p-6 md:p-10">
-            {/* Profile Image */}
             <div className="flex justify-center mb-6">
-              <div className="">
-                <Image
-                  src={image_url || `/images/user.png`}
-                  height={400}
-                  width={400}
-                  alt="Tutor Profile"
-                  className="w-32 h-32 rounded-xl object-cover border"
-                />
-              </div>
+              <Image
+                src={profile_picture}
+                unoptimized
+                height={120}
+                width={120}
+                alt="Tutor Profile"
+                className="w-32 h-32 rounded-xl object-cover border"
+              />
             </div>
 
             <h2 className="text-2xl font-bold text-center text-dark mb-6">
-              User information
+              User Information
             </h2>
 
-            {/* Details List - Data mapping from userData */}
-            <div className="space-y-2 mb-6">
-              <DetailRow label="Tutor name" value={name || "N/A"} />
-              <DetailRow label="Email" value={email || "N/A"} />
+            <div className="space-y-2 mb-6 text-black">
+              <DetailRow label="Tutor Name" value={full_name || username} />
+              <DetailRow label="Email" value={email} />
               <DetailRow
-                label="Location"
-                value={location || "Location not provided"}
+                label="Education"
+                value={profile?.education_level || "N/A"}
               />
               <DetailRow
-                label="Teaching time"
-                value={teaching_time || "Not specified"}
+                label="Institution"
+                value={profile?.institution || "N/A"}
               />
-              <DetailRow label="Current Status" value={status || "N/A"} />
+              <DetailRow
+                label="Experience"
+                value={`${profile?.years_of_experience || 0} Years`}
+              />
+              <DetailRow label="Current Status" value={status} />
             </div>
 
-            {/* Certification */}
-            <div className="mb-6">
-              <p className="text-dark font-medium mb-3">
-                Certification (NIE cert, ABRSM)
-              </p>
-              <div className="relative w-full max-w-64 min-h-20 rounded-lg border border-gray/20 overflow-hidden group cursor-pointer">
-                <Image
-                  src={"/images/certificate.jpg"}
-                  height={500}
-                  width={300}
-                  alt="Certificate Image"
-                  className="h-24 w-full object-cover bg-cover"
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="bg-white/90 p-2 rounded-full shadow-sm text-dark hover:scale-110 transition-transform">
-                    <Download size={18} />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Education */}
-            <div className="mb-8">
-              <p className="text-dark font-medium mb-1">
-                Personal education level
-              </p>
-              <p className="text-gray text-sm">
-                {education || "Education details not available."}
-              </p>
-              {status === "Rejected" ? (
-                <>
-                  <p className="text-dark font-medium mb-1 mt-3">
-                    Cause for reject
-                  </p>
-                  <p className="text-gray text-sm">The file is incorrect.</p>
-                </>
-              ) : (
-                ""
-              )}
-            </div>
-
-            {["Approved", "Rejected"].includes(status) ? (
-              <button
-                onClick={() => {
-                  console.log("Approved:", name);
-                  setShowModal(false);
-                }}
-                className="py-3 rounded-xl bg-linear-to-br from-primary/70 to-primary text-white font-bold shadow-md transition-colors w-full"
-              >
-                Close
-              </button>
-            ) : (
-              <div className="grid grid-cols-2 gap-4 mb-3">
+            {/* Actions */}
+            {status === "pending" ? (
+              <div className="grid grid-cols-2 gap-4">
                 <button
                   onClick={() => setIsRejecting(true)}
-                  className="py-3 rounded-xl border border-[#FF4D4D] text-[#FF4D4D] font-bold hover:bg-red-50 transition-colors"
+                  className="py-3 rounded-xl border border-red-500 text-red-500 font-bold hover:bg-red-50"
+                  disabled={mutation.isLoading}
                 >
                   Reject
                 </button>
                 <button
-                  onClick={() => {
-                    console.log("Approved:", name);
-                    setShowModal(false);
-                  }}
-                  className="py-3 rounded-xl bg-linear-to-br from-primary/70 to-primary text-white font-bold shadow-md transition-colors"
+                  onClick={() => mutation.mutate({ action: "ACTIVATE" })}
+                  className="py-3 rounded-xl bg-primary text-white font-bold"
+                  disabled={mutation.isLoading}
                 >
-                  Approve
+                  {mutation.isLoading ? "Loading..." : "Activate"}
                 </button>
               </div>
+            ) : (
+              <button
+                onClick={() => setShowModal(false)}
+                className="w-full py-3 rounded-xl bg-primary text-white font-bold"
+              >
+                Close
+              </button>
             )}
           </div>
         ) : (
-          /* --- Rejection Reason Modal --- */
-          <div className="p-4 md:p-6 lg:p-8 animate-in fade-in zoom-in duration-300">
-            <h2 className="text-3xl font-bold text-center text-dark mb-6">
-              Rejection
+          /* Rejection Screen */
+          <div className="p-8">
+            <h2 className="text-2xl font-bold text-center mb-6">
+              Reject Tutor
             </h2>
-
-            <div className="mb-6">
-              <label className="block lg:text-lg font-semibold text-dark mb-4">
-                Reason for rejecting
-              </label>
-              <textarea
-                placeholder="Write reason here.."
-                className="w-full h-40 p-4 bg-[#F4F7FE] rounded-2xl border-none outline-none resize-none text-dark focus:ring-2 focus:ring-primary/20"
-              />
-            </div>
-
-            <div className="flex flex-col gap-3">
+            <textarea
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="Provide reason for rejection..."
+              className="w-full h-40 p-4 bg-[#F4F7FE] rounded-2xl outline-none text-black"
+            />
+            <div className="mt-6 flex flex-col gap-3">
               <button
-                onClick={() => {
-                  console.log("Rejected:", name);
-                  setShowModal(false);
-                }}
-                className="w-full py-4 rounded-xl bg-linear-to-b from-[#32afe2] to-[#1E3A8A] text-white text-xl font-bold shadow-lg active:scale-[0.98] transition-transform"
+                onClick={() =>
+                  mutation.mutate({ action: "REJECT", reason: rejectReason })
+                }
+                disabled={!rejectReason || mutation.isLoading}
+                className="py-4 rounded-xl bg-red-600 text-white font-bold disabled:bg-gray-400"
               >
-                Done
+                {mutation.isLoading ? "Processing..." : "Confirm Reject"}
               </button>
               <button
                 onClick={() => setIsRejecting(false)}
-                className="text-gray-500 font-medium hover:text-dark"
+                className="text-gray-500 text-center"
               >
-                Back to Info
+                Back
               </button>
             </div>
           </div>
@@ -168,9 +161,9 @@ const UserInfoModal = ({ setShowModal, userData }) => {
 };
 
 const DetailRow = ({ label, value }) => (
-  <div className="flex justify-between items-start text-sm md:text-base">
+  <div className="flex justify-between items-start py-1 border-b border-gray-50">
     <span className="text-dark font-medium">{label}</span>
-    <span className="text-gray text-right pl-4">{value}</span>
+    <span className="text-gray-600 text-right">{value}</span>
   </div>
 );
 

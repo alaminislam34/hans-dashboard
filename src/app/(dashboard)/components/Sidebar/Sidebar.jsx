@@ -30,6 +30,12 @@ const SIDELINKS = [
     match: (path) => path.startsWith("/dashboard/tutor_verify"),
   },
   {
+    name: "Class Management",
+    icon: <IdCard size={22} />,
+    href: "/dashboard/class_manage",
+    match: (path) => path.startsWith("/dashboard/class_manage"),
+  },
+  {
     name: "User Management",
     icon: <Users size={22} />,
     href: "/dashboard/users_manage",

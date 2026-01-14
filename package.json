@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.17",
     "axios": "^1.13.2",
     "chart.js": "^4.5.1",
     "lucide-react": "^0.562.0",
