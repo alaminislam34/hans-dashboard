@@ -19,6 +19,7 @@ const SupportDetailModal = ({ data, close }) => {
               sizes="128px"
               className="object-cover"
               priority
+              unoptimized
             />
           </div>
         </div>
