@@ -11,13 +11,11 @@ import {
   Tooltip,
   Filler,
   Legend,
-  ChartOptions,
-  ChartData,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { User, ChevronDown } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/lib/Api";
 
-// Register ChartJS components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -30,15 +28,34 @@ ChartJS.register(
 );
 
 const StaticAnalysis = () => {
-  // Chart Data Configuration
+  // 1. Fetch the data from your endpoint
+  const { data: stats, isLoading } = useQuery({
+    queryKey: ["admin-stats"],
+    queryFn: async () => {
+      const res = await api.get("/api/accounts/admin/dashboard/stats/");
+      return res.data;
+    },
+  });
+
+  // 2. Prepare the Chart Data based on your API response
   const data = {
-    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    // We map your API keys to the labels
+    labels: ["Total Users", "Parents", "Tutors", "Verified", "New (Week)"],
     datasets: [
       {
         fill: true,
         label: "Users",
-        data: [1200, 1900, 3000, 5000, 3500, 4200, 8100],
-        borderColor: "#2563EB", // --color-primary
+        // Extracting values from your JSON structure
+        data: stats
+          ? [
+              stats.users.total,
+              stats.users.parents,
+              stats.users.tutors,
+              stats.users.verified,
+              stats.users.new_this_week,
+            ]
+          : [0, 0, 0, 0, 0],
+        borderColor: "#2563EB",
         backgroundColor: (context) => {
           const ctx = context.chart.ctx;
           const gradient = ctx.createLinearGradient(0, 0, 0, 400);
@@ -46,7 +63,7 @@ const StaticAnalysis = () => {
           gradient.addColorStop(1, "rgba(37, 99, 235, 0)");
           return gradient;
         },
-        tension: 0.4, // Creates the smooth curve
+        tension: 0.4,
         pointRadius: 6,
         pointBackgroundColor: "#2563EB",
         pointBorderColor: "#fff",
@@ -56,7 +73,6 @@ const StaticAnalysis = () => {
     ],
   };
 
-  // Chart Options Configuration
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -71,7 +87,7 @@ const StaticAnalysis = () => {
         padding: 12,
         displayColors: false,
         callbacks: {
-          label: (context) => `+${context.parsed.y / 1000}k Users`,
+          label: (context) => `${context.parsed.y} Users`,
         },
       },
     },
@@ -81,12 +97,12 @@ const StaticAnalysis = () => {
         ticks: { color: "#888888", font: { size: 12 } },
       },
       y: {
+        beginAtZero: true,
         border: { display: false },
         grid: { color: "#F3F4F6" },
         ticks: {
           color: "#888888",
-          callback: (value) =>
-            Number(value) >= 1000 ? `${Number(value) / 1000}k` : value,
+          callback: (value) => value,
         },
       },
     },
@@ -94,29 +110,28 @@ const StaticAnalysis = () => {
 
   return (
     <div className="w-full mt-6">
-      {/* Main Card */}
       <div className="bg-white rounded-3xl shadow-sm border border-blue-50 p-8">
-        {/* Stats Row */}
         <div className="flex items-center justify-between gap-8 mb-10">
           <div>
             <p className="text-gray text-sm mb-2">Static analysis</p>
             <h3 className="text-2xl font-bold text-dark">Users</h3>
           </div>
           <div className="flex flex-col md:flex-row gap-2 md:gap-4 items-center">
-            <button className="flex items-center flex-row gap-4 ">
-              <span className="w-3 h-3 shadow rounded-full ring-4 ring-gray-100"></span>
+            {/* Kept your original design buttons without logic changes */}
+            <div className="flex items-center flex-row gap-4 ">
               <p className="md:text-lg font-medium">Monthly</p>
-            </button>
-            <button className="flex items-center flex-row gap-4 ">
-              <span className="w-3 h-3 shadow rounded-full ring-4 ring-gray-100"></span>
-              <p className="md:text-lg font-medium">Monthly</p>
-            </button>
+            </div>
           </div>
         </div>
 
-        {/* Chart Container */}
         <div className="relative h-100 w-full">
-          <Line data={data} options={options} />
+          {isLoading ? (
+            <div className="w-full h-full flex items-center justify-center bg-gray-50 animate-pulse rounded-xl">
+              <p className="text-gray-400">Loading chart...</p>
+            </div>
+          ) : (
+            <Line data={data} options={options} />
+          )}
         </div>
       </div>
     </div>
