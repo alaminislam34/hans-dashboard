@@ -1,62 +1,76 @@
 "use client";
-import React, { useState } from "react";
-import { X, AlertTriangle, Loader2 } from "lucide-react";
 
-const ReasonModal = ({ isOpen, onClose, onConfirm, isPending, userName }) => {
+import React, { useState } from "react";
+import { X, Loader2 } from "lucide-react";
+
+const ReasonModal = ({ isOpen, onClose, onConfirm, isPending }) => {
   const [reason, setReason] = useState("");
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 relative">
+    <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="bg-white w-full max-w-md rounded-4xl shadow-2xl p-8 relative">
         {/* Close Button */}
-        <button 
-          onClick={onClose} 
-          className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors"
+        <button
+          onClick={onClose}
+          className="absolute right-6 top-6 p-1.5 bg-gray-100 rounded-full text-gray-500 hover:text-dark transition-colors"
         >
           <X size={20} />
         </button>
 
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-4 text-amber-600">
-          <AlertTriangle size={24} />
-          <h3 className="text-xl font-bold">Suspend Account</h3>
+        {/* Header Section */}
+        <div className="text-center mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-dark mb-2">
+            Are you sure?
+          </h2>
+          <p className="text-gray-400 font-medium">
+            You want to ban this user.
+          </p>
         </div>
 
-        {/* Body */}
-        <p className="text-gray-600 mb-4 text-sm leading-relaxed">
-          Are you sure you want to suspend <strong>{userName}</strong>? This action will restrict their access to the platform. Please provide a reason below.
-        </p>
-
-        <textarea
-          autoFocus
-          className="w-full h-32 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none text-sm transition-all bg-gray-50 focus:bg-white"
-          placeholder="e.g., Violation of community guidelines, Multiple spam reports..."
-          value={reason}
-          onChange={(e) => setReason(e.target.value)}
-        />
-
-        {/* Actions */}
-        <div className="flex gap-3 mt-6">
+        {/* Toggle Buttons (Yes/No) */}
+        <div className="flex gap-4 mb-8">
+          <button className="flex-1 py-3 px-6 rounded-xl bg-linear-to-b from-primary to-[#1E3A8A] text-white font-bold shadow-lg shadow-blue-200 transition-all">
+            Yes
+          </button>
           <button
             onClick={onClose}
-            className="flex-1 py-2.5 text-gray-500 font-medium hover:bg-gray-100 rounded-xl transition-colors"
+            className="flex-1 py-3 px-6 rounded-xl border border-gray-200 text-gray-400 font-bold hover:bg-gray-50 transition-all"
           >
-            Cancel
-          </button>
-          <button
-            disabled={isPending || !reason.trim()}
-            onClick={() => onConfirm(reason)}
-            className="flex-1 py-2.5 bg-red-600 text-white font-medium rounded-xl hover:bg-red-700 disabled:opacity-50 transition-all shadow-md flex items-center justify-center gap-2"
-          >
-            {isPending ? (
-              <Loader2 className="animate-spin" size={18} />
-            ) : (
-              "Confirm Suspension"
-            )}
+            No
           </button>
         </div>
+
+        {/* Input Section */}
+        <div className="space-y-3 mb-8">
+          <label className="text-dark font-bold text-lg block">
+            What is the reason for ban?
+          </label>
+          <textarea
+            autoFocus
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            placeholder="Write here.."
+            className="w-full h-32 p-4 bg-[#F8FAFF] rounded-2xl border-none focus:ring-2 focus:ring-primary/10 outline-none resize-none text-gray-600 placeholder:text-gray-300 transition-all"
+          />
+        </div>
+
+        {/* Action Button */}
+        <button
+          disabled={isPending || !reason.trim()}
+          onClick={() => onConfirm(reason)}
+          className="w-full py-4 rounded-2xl bg-linear-to-b from-primary to-[#1E3A8A] text-white font-bold text-xl shadow-xl active:scale-[0.98] transition-all flex items-center justify-center disabled:opacity-70"
+        >
+          {isPending ? (
+            <div className="flex items-center gap-2">
+              <span className="text-base font-medium">Processing...</span>
+              <Loader2 size={20} className="animate-spin" />
+            </div>
+          ) : (
+            "Done"
+          )}
+        </button>
       </div>
     </div>
   );
