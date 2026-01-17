@@ -3,9 +3,9 @@
 import React, { useState, useMemo } from "react"; // Added useMemo import
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import DataTable from "../components/CommonTable";
-import api from "@/lib/Api";
 import UserInfoModal from "./components/ActionModal";
 import { Eye } from "lucide-react";
+import axiosInstance from "@/api/axiosInstance";
 
 const ClassManage = () => {
   const queryClient = useQueryClient();
@@ -21,7 +21,7 @@ const ClassManage = () => {
   } = useQuery({
     queryKey: ["classes"],
     queryFn: async () => {
-      const res = await api.get("/api/classes/summary");
+      const res = await axiosInstance.get("/api/classes/summary");
       // Ensure we always return an array even if results is missing
       return res?.data?.results || [];
     },

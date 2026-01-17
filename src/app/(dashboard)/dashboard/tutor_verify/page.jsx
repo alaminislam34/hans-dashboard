@@ -5,7 +5,7 @@ import { Eye } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import DataTable from "../components/CommonTable";
 import UserInfoModal from "./components/ActionModal";
-import api from "@/lib/Api";
+import axiosInstance from "@/api/axiosInstance";
 
 const TutorManage = () => {
   const [filter, setFilter] = useState("All");
@@ -15,7 +15,7 @@ const TutorManage = () => {
   const { data: tutors = [], isLoading } = useQuery({
     queryKey: ["tutors"],
     queryFn: async () => {
-      const res = await api.get("/api/accounts/users/");
+      const res = await axiosInstance.get("/api/accounts/users/");
       const allUsers = res.data.results || [];
       // Only keep users with type "tutor"
       return allUsers.filter((user) => user.user_type === "tutor");

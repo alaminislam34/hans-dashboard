@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   Users,
   FileText,
@@ -13,7 +13,6 @@ import {
   LayoutGrid,
 } from "lucide-react";
 import { HiOutlineLogout } from "react-icons/hi";
-import toast from "react-hot-toast";
 import { useGlobalState } from "@/app/providers/StateProvider";
 
 const SIDELINKS = [
@@ -62,22 +61,11 @@ const SIDELINKS = [
 ];
 
 const Sidebar = () => {
-  const { user } = useGlobalState();
+  const { user, logout } = useGlobalState();
   const pathname = usePathname();
-  const router = useRouter();
-
-  const handleLogout = () => {
-    // Add your logout logic here
-    toast.success("Logout successful");
-    localStorage.removeItem("admin");
-    localStorage.removeItem("token");
-    setTimeout(() => {
-      router.push("/login");
-    }, 1000);
-  };
 
   return (
-    <aside className="fixed left-0 top-0 h-screen lg:w-67 xl:w-77">
+    <aside className="fixed left-0 top-0 min-h-200 overflow-y-auto h-screen lg:w-67 xl:w-77">
       <div className="h-full p-4">
         <div className="flex flex-col justify-between p-6 bg-[#F8FBFF] transition-all rounded-2xl h-full">
           <div>
@@ -141,7 +129,7 @@ const Sidebar = () => {
 
           {/* Logout Action */}
           <button
-            onClick={handleLogout}
+            onClick={logout}
             className="flex items-center justify-between w-full px-5 py-3 mt-auto font-semibold text-white transition-all rounded-xl bg-primary hover:bg-blue-700 hover:shadow-lg active:scale-95 group"
           >
             <span>Logout</span>

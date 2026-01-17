@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import api from "@/lib/Api";
+import axiosInstance from "@/api/axiosInstance";
 import toast from "react-hot-toast";
 
 const UserInfoModal = ({ setShowModal, userData }) => {
@@ -28,11 +28,11 @@ const UserInfoModal = ({ setShowModal, userData }) => {
   const mutation = useMutation({
     mutationFn: async ({ action, reason }) => {
       if (action === "ACTIVATE") {
-        return await api.post("/api/accounts/admin/dashboard/activate_user/", {
+        return await axiosInstance.post("/api/accounts/admin/dashboard/activate_user/", {
           user_id: user_id,
         });
       } else {
-        return await api.post("/api/accounts/admin/dashboard/reject_tutor/", {
+        return await axiosInstance.post("/api/accounts/admin/dashboard/reject_tutor/", {
           tutor_profile_id: tutor_profile_id,
           notes: reason,
         });

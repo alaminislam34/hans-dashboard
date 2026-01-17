@@ -1,5 +1,9 @@
-const BASE_URL = "http://10.10.7.51:8000";
-export const LOGIN_API = `${BASE_URL}/api/accounts/auth/login/`;
-export const REFRESH_TOKEN_API = `${BASE_URL}/api/accounts/token/refresh/`;
-export const GET_ALL_CLASSES_API = `${BASE_URL}/api/classes/summary/`;
-export const GET_TUTOR_PROFILE_API=`${BASE_URL}/`
+export const LOGIN_API = `/api/accounts/auth/login/`;
+export const OTP_VERIFY_API = `/api/accounts/auth/verify_otp/`;
+export const PASSWORD_FORGET_API = `/api/accounts/auth/password_reset_request/`;
+export const PASSWORD_SET_API = `/api/accounts/users/change_password/`;
+export const REFRESH_TOKEN_API = `/api/accounts/token/refresh/`;
+export const USERS_API = "/api/accounts/users/";
+export const STATICS_API = "/api/accounts/admin/dashboard/stats/";
+export const GET_ALL_CLASSES_API = `/api/classes/summary/`;
+export const GET_TUTOR_PROFILE_API = `/`;

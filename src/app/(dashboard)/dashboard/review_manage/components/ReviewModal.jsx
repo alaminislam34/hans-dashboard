@@ -4,7 +4,7 @@ import React from "react";
 import { X, Star, Ban } from "lucide-react";
 import Image from "next/image";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import api from "@/lib/Api";
+import axiosInstance from "@/api/axiosInstance";
 import { toast } from "react-hot-toast"; // অপশনাল: নোটিফিকেশনের জন্য
 
 const ReviewDetailModal = ({ review, close, refresh }) => {
@@ -13,7 +13,7 @@ const ReviewDetailModal = ({ review, close, refresh }) => {
   // ১. ইউজার সাসপেন্ড বা ব্যান করার মিউটেশন
   const suspendMutation = useMutation({
     mutationFn: async (userId) => {
-      return await api.post(`/api/accounts/admin/dashboard/suspend_user/`, {
+      return await axiosInstance.post(`/api/accounts/admin/dashboard/suspend_user/`, {
         user_id: userId,
       });
     },

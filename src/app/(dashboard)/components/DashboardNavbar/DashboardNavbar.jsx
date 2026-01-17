@@ -41,7 +41,7 @@ const NAV_LINKS = [
 ];
 
 const DashboardNavbar = () => {
-  const { isSidebarOpen, setIsSidebarOpen } = useGlobalState();
+  const { isSidebarOpen, setIsSidebarOpen, logout } = useGlobalState();
   const pathname = usePathname();
 
   // 2. Derive the page title dynamically based on the current path
@@ -112,7 +112,9 @@ const DashboardNavbar = () => {
             <div className="relative w-14 h-14 shrink-0">
               <Image
                 src="/images/user.jpg"
-                fill
+                height={200}
+                width={200}
+                unoptimized
                 alt="Profile"
                 className="rounded-lg object-cover"
               />
@@ -157,6 +159,7 @@ const DashboardNavbar = () => {
 
           {/* Logout Button */}
           <button
+            onClick={logout}
             type="button"
             className="mt-auto text-white bg-primary hover:bg-primary/90 duration-300 w-full flex items-center justify-between gap-3 rounded-xl py-3 px-5 font-semibold transition-transform active:scale-95"
           >

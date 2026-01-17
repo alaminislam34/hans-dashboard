@@ -29,7 +29,6 @@ const ReasonModal = ({ isOpen, onClose, onConfirm, isPending }) => {
           </p>
         </div>
 
-        {/* Toggle Buttons (Yes/No) */}
         <div className="flex gap-4 mb-8">
           <button className="flex-1 py-3 px-6 rounded-xl bg-linear-to-b from-primary to-[#1E3A8A] text-white font-bold shadow-lg shadow-blue-200 transition-all">
             Yes

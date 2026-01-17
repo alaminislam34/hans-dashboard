@@ -14,7 +14,8 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { useQuery } from "@tanstack/react-query";
-import api from "@/lib/Api";
+import axiosInstance from "@/api/axiosInstance";
+import { STATICS_API } from "@/api/ApiEndPoint";
 
 ChartJS.register(
   CategoryScale,
@@ -24,22 +25,19 @@ ChartJS.register(
   Title,
   Tooltip,
   Filler,
-  Legend
+  Legend,
 );
 
 const StaticAnalysis = () => {
-  // 1. Fetch the data from your endpoint
   const { data: stats, isLoading } = useQuery({
     queryKey: ["admin-stats"],
     queryFn: async () => {
-      const res = await api.get("/api/accounts/admin/dashboard/stats/");
+      const res = await axiosInstance.get(STATICS_API);
       return res.data;
     },
   });
 
-  // 2. Prepare the Chart Data based on your API response
   const data = {
-    // We map your API keys to the labels
     labels: ["Total Users", "Parents", "Tutors", "Verified", "New (Week)"],
     datasets: [
       {

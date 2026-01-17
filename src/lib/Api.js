@@ -16,7 +16,7 @@ const processQueue = (error, token = null) => {
 };
 
 /* ---------------- REQUEST ---------------- */
-api.interceptors.request.use((config) => {
+axiosInstance.interceptors.request.use((config) => {
   const token = getToken();
 
   if (token?.accessToken) {
@@ -27,7 +27,7 @@ api.interceptors.request.use((config) => {
 });
 
 /* ---------------- RESPONSE ---------------- */
-api.interceptors.response.use(
+axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;

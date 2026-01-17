@@ -8,7 +8,8 @@ import DataTable from "../components/CommonTable";
 import ParentBanModal from "./components/ParentModal";
 import TutorBanModal from "./components/TutorModal";
 import ReasonModal from "./components/ReasonModal";
-import api from "@/lib/Api";
+import axiosInstance from "@/api/axiosInstance";
+import { USERS_API } from "@/api/ApiEndPoint";
 
 const UsersManage = () => {
   const queryClient = useQueryClient();
@@ -29,7 +30,7 @@ const UsersManage = () => {
   } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
-      const response = await api.get("/api/accounts/users/");
+      const response = await axiosInstance.get(USERS_API);
       return response.data.results || [];
     },
   });
@@ -37,12 +38,12 @@ const UsersManage = () => {
   // --- API Mutation (Suspend User) ---
   const banMutation = useMutation({
     mutationFn: async ({ userId, reason }) => {
-      const response = await api.post(
+      const response = await axiosInstance.post(
         "/api/accounts/admin/dashboard/suspend_user/",
         {
           user_id: userId,
           reason: reason,
-        }
+        },
       );
       return response.data;
     },
@@ -69,17 +70,23 @@ const UsersManage = () => {
   };
 
   const filteredData = users?.filter((user) => {
+    // ১. ট্যাব ফিল্টার (Parent/Tutor)
     const type = user.user_type || "other";
     const matchesTab = type === activeTab;
 
-    const matchesStatus =
-      statusFilter === "all"
-        ? true
-        : statusFilter === "banned"
-        ? user.is_suspended === true
-        : user.is_suspended !== true;
+    // ২. স্ট্যাটাস ফিল্টার (আপনার API এর 'status' ফিল্ড অনুযায়ী)
+    // ডেটাতে 'status' ফিল্ড আছে (active/suspend)
+    if (statusFilter === "all") return matchesTab;
 
-    return matchesTab && matchesStatus;
+    if (statusFilter === "active") {
+      return matchesTab && user.status === "active";
+    }
+
+    if (statusFilter === "banned") {
+      return matchesTab && user.status === "suspend";
+    }
+
+    return matchesTab;
   });
 
   const handleOpenProfileModal = (user) => {
@@ -114,13 +121,13 @@ const UsersManage = () => {
       header: "Status",
       render: (row) => (
         <span
-          className={`px-2 py-1 rounded-full text-xs font-medium ${
-            row.is_suspended
+          className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${
+            row.status === "suspend"
               ? "bg-red-100 text-red-600"
               : "bg-green-100 text-green-600"
           }`}
         >
-          {row.is_suspended ? "Suspended" : "Active"}
+          {row.status || "Active"}
         </span>
       ),
     },

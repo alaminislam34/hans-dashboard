@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Eye, Star } from "lucide-react";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
-import api from "@/lib/Api";
+import axiosInstance from "@/api/axiosInstance";
 import DataTable from "../components/CommonTable";
 import ReviewDetailModal from "./components/ReviewModal";
 
@@ -20,7 +20,7 @@ const ReviewManage = () => {
   } = useQuery({
     queryKey: ["reviews-list"],
     queryFn: async () => {
-      const res = await api.get("/api/reviews/");
+      const res = await axiosInstance.get("/api/reviews/");
       return res.data?.reviews_list || [];
     },
   });

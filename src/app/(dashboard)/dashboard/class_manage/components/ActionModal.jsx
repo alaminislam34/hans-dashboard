@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { X } from "lucide-react";
-import api from "@/lib/Api";
+import axiosInstance from "@/api/axiosInstance";
 import toast from "react-hot-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -31,7 +31,7 @@ const UserInfoModal = ({ setShowModal, userData }) => {
       const payload =
         status === "REJECTED" ? { class_id, reason } : { class_id };
 
-      const res = await api.post(endpoint, payload);
+      const res = await axiosInstance.post(endpoint, payload);
       return res.data;
     },
     // The second argument 'variables' contains { status, reason }

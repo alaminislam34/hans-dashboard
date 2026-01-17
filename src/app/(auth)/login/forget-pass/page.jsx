@@ -10,7 +10,6 @@ const ForgetPassword = () => {
   const route = useRouter();
 
   const SendCodeHandler = (e) => {
-    // FIX 1: Corrected spelling from preventDeafult to preventDefault
     e.preventDefault();
 
     toast.success("Check your email.");
@@ -69,7 +68,7 @@ const ForgetPassword = () => {
               </span>
               <input
                 type="email"
-                required // Added required for basic validation
+                required
                 placeholder="Enter your email..."
                 className="w-full pl-12 pr-4 py-4 bg-[#F3F4F6] border-none rounded-xl focus:ring-2 focus:ring-primary outline-none text-dark placeholder-gray"
               />
