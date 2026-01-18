@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import { Lock, EyeOff, Eye, Loader2 } from "lucide-react";
-import { useGlobalState } from "@/context/StateProvider";
 import toast from "react-hot-toast";
+import { useGlobalState } from "@/app/providers/StateProvider";
 
 const CreateNewPassword = () => {
   const { resetPassword, tempEmail } = useGlobalState();
