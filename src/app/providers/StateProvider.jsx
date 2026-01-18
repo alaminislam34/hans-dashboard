@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
@@ -8,13 +8,15 @@ import {
   LOGIN_API,
   OTP_VERIFY_API,
   PASSWORD_FORGET_API,
-  PASSWORD_SET_API, // এটি নিশ্চিত করুন ইমপোর্ট করা আছে
+  PASSWORD_SET_API,
 } from "@/api/ApiEndPoint";
 import axiosInstance from "@/api/axiosInstance";
 
 const AppContext = createContext(undefined);
 
 export const StateProvider = ({ children }) => {
+  const router = useRouter();
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
   const [user, setUser] = useState(null);
@@ -22,7 +24,21 @@ export const StateProvider = ({ children }) => {
   const [tempEmail, setTempEmail] = useState("");
   const [authFlow, setAuthFlow] = useState("");
 
-  const router = useRouter();
+  useEffect(() => {
+    const adminCookie = Cookies.get("admin");
+    const token = Cookies.get("accessToken");
+
+    if (adminCookie && token) {
+      try {
+        const parsedUser = JSON.parse(adminCookie);
+        setUser(parsedUser);
+        setIsLogin(true);
+      } catch (error) {
+        console.error("Failed to parse admin cookie:", error);
+        Cookies.remove("admin");
+      }
+    }
+  }, []);
 
   const login = async (email, password) => {
     try {
@@ -42,6 +58,8 @@ export const StateProvider = ({ children }) => {
           name: "Super Admin",
           email: res.data.user.email,
           image: res.data.user.profile_picture,
+          address: res.data.user.address || "",
+          phone: res.data.user.phone_number || "",
         };
 
         Cookies.set("admin", JSON.stringify(userData), {
@@ -65,7 +83,6 @@ export const StateProvider = ({ children }) => {
   const requestPasswordReset = async (email) => {
     try {
       const res = await axiosInstance.post(PASSWORD_FORGET_API, { email });
-
       if (res.status === 200 || res.status === 201) {
         setTempEmail(email);
         setAuthFlow("forget");
@@ -87,7 +104,6 @@ export const StateProvider = ({ children }) => {
         email: tempEmail,
         otp: otp,
       });
-
       if (res.status === 200) {
         toast.success("OTP Verified! Please set a new password.");
         router.push("/login/change-pass");
@@ -105,16 +121,14 @@ export const StateProvider = ({ children }) => {
       toast.error("Passwords do not match!");
       return { success: false };
     }
-
     try {
       const res = await axiosInstance.post(PASSWORD_SET_API, {
         email: tempEmail,
         new_password: newPassword,
         confirm_password: confirmPassword,
       });
-
       if (res.status === 200 || res.status === 201) {
-        toast.success("Password changed successfully! Please login.");
+        toast.success("Password changed successfully!");
         setTempEmail("");
         setAuthFlow("");
         router.push("/login");
@@ -147,6 +161,7 @@ export const StateProvider = ({ children }) => {
     Cookies.remove("admin", { path: "/" });
     setIsLogin(false);
     setUser(null);
+    toast.success("Logged out successfully");
     router.push("/login");
   };
 

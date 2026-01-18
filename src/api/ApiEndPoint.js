@@ -5,5 +5,6 @@ export const PASSWORD_SET_API = `/api/accounts/users/change_password/`;
 export const REFRESH_TOKEN_API = `/api/accounts/token/refresh/`;
 export const USERS_API = "/api/accounts/users/";
 export const STATICS_API = "/api/accounts/admin/dashboard/stats/";
+export const UPDATE_PROFILE_API = "/api/accounts/users/me/";
 export const GET_ALL_CLASSES_API = `/api/classes/summary/`;
 export const GET_TUTOR_PROFILE_API = `/`;

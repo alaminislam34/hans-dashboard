@@ -72,14 +72,23 @@ const Sidebar = () => {
             {/* User Profile Section */}
             <div className="flex items-center gap-4 mt-6 mb-10">
               <div className="relative w-12 h-12 overflow-hidden rounded-lg border border-gray-100">
-                <Image
-                  src={user?.image ? user?.image : "/images/user.jpg"}
-                  fill
-                  priority
-                  sizes="48px"
-                  alt="Admin Profile"
-                  className="object-cover"
-                />
+                {user?.image ? (
+                  <Image
+                    src={user.image}
+                    fill
+                    unoptimized
+                    priority
+                    alt="Admin Profile"
+                    className="object-cover"
+                  />
+                ) : (
+                  <Image
+                    src="/images/user.jpg"
+                    fill
+                    alt="Default Profile"
+                    className="object-cover"
+                  />
+                )}
               </div>
               <div className="flex flex-col min-w-0">
                 <h2 className="text-sm md:text-base font-bold text-slate-900 truncate">
