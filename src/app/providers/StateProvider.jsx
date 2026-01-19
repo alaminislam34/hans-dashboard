@@ -181,6 +181,7 @@ export const StateProvider = ({ children }) => {
         requestPasswordReset,
         resetPassword,
         resendOtp,
+        setUser,
       }}
     >
       {children}

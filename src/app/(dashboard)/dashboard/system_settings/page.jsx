@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Underline as UnderlineExtension } from "@tiptap/extension-underline";
@@ -11,9 +11,10 @@ import { TextStyle } from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import axiosInstance from "@/api/axiosInstance";
 import { UPDATE_PROFILE_API } from "@/api/ApiEndPoint";
+import Cookies from "js-cookie";
 
 import {
   User,
@@ -24,14 +25,10 @@ import {
   Italic,
   Underline,
   Strikethrough,
-  Link2,
   Image as ImageIcon2,
   List,
   ListOrdered,
-  AlignLeft,
   AlignCenter,
-  AlignRight,
-  Quote,
   Trash2,
   Camera,
   Loader2,
@@ -43,7 +40,6 @@ const SystemSettings = () => {
 
   return (
     <div className="p-4 md:p-0">
-      <Toaster position="top-right" />
       <div className="flex justify-end gap-4 md:gap-8 mb-6 text-sm font-medium border-b border-gray-100 pb-4">
         {["personal", "terms", "privacy"].map((tab) => (
           <button
@@ -77,7 +73,7 @@ const SystemSettings = () => {
 const PersonalInfoForm = () => {
   const queryClient = useQueryClient();
   const fileInputRef = useRef(null);
-  const { user } = useGlobalState();
+  const { user, setUser } = useGlobalState();
   const [previewImage, setPreviewImage] = useState(null);
   const [formData, setFormData] = useState({
     email: user?.email,
@@ -250,6 +246,7 @@ const InputWithIcon = ({ icon, placeholder, value, onChange }) => (
       {icon}
     </div>
     <input
+      required
       type="text"
       value={value}
       onChange={onChange}

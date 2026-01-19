@@ -74,7 +74,7 @@ const Sidebar = () => {
               <div className="relative w-12 h-12 overflow-hidden rounded-lg border border-gray-100">
                 {user?.image ? (
                   <Image
-                    src={user.image}
+                    src={user?.image}
                     fill
                     unoptimized
                     priority
