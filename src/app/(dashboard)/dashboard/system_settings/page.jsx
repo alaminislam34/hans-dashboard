@@ -77,7 +77,7 @@ const PersonalInfoForm = () => {
   const [previewImage, setPreviewImage] = useState(null);
   const [formData, setFormData] = useState({
     email: user?.email,
-    username: "",
+    full_name: "",
     phone_number: "",
     address: "",
     profile_picture: null,
@@ -89,7 +89,7 @@ const PersonalInfoForm = () => {
       const res = await axiosInstance.get(UPDATE_PROFILE_API);
       const data = res.data;
       setFormData({
-        username: data.username || "",
+        full_name: data.full_name || "",
         phone_number: data.phone_number || "",
         address: data.address || "",
         profile_picture: null,
@@ -102,7 +102,7 @@ const PersonalInfoForm = () => {
   const mutation = useMutation({
     mutationFn: async (updatedData) => {
       const data = new FormData();
-      data.append("username", updatedData.username);
+      data.append("full_name", updatedData.full_name);
       data.append("phone_number", updatedData.phone_number);
       data.append("address", updatedData.address);
 
@@ -119,7 +119,7 @@ const PersonalInfoForm = () => {
       queryClient.invalidateQueries(["my-profile"]);
 
       const updatedUser = {
-        name: data.username,
+        name: data.full_name,
         email: data.email,
         image: data.profile_picture,
         address: data.address,
@@ -136,9 +136,9 @@ const PersonalInfoForm = () => {
       toast.success("Profile updated successfully!");
     },
     onError: (error) => {
-      const errorMsg =
+      const errorMessage =
         error?.response?.data?.message || "Failed to update profile.";
-      toast.error(errorMsg);
+      toast.error(errorMessage);
     },
   });
   const handleImageChange = (e) => {
@@ -204,10 +204,10 @@ const PersonalInfoForm = () => {
       <div className="w-full space-y-4 mb-6">
         <InputWithIcon
           icon={<User size={20} />}
-          placeholder="Username"
-          value={formData.username}
+          placeholder="full_name"
+          value={formData.full_name}
           onChange={(e) =>
-            setFormData({ ...formData, username: e.target.value })
+            setFormData({ ...formData, full_name: e.target.value })
           }
         />
         <InputWithIcon

@@ -55,7 +55,7 @@ export const StateProvider = ({ children }) => {
         });
 
         const userData = {
-          name: "Super Admin",
+          name: res.data.user.full_name,
           email: res.data.user.email,
           image: res.data.user.profile_picture,
           address: res.data.user.address || "",
