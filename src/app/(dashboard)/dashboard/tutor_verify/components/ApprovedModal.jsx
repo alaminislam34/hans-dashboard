@@ -7,11 +7,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "@/api/axiosInstance";
 import toast from "react-hot-toast";
 
-const UserInfoModal = ({ setShowModal, userData }) => {
+const ApprovedModal = ({ setApprovedModal, notes }) => {
   const [isRejecting, setIsRejecting] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
-  const [isApproving, setIsApproving] = useState(false);
-  const [approveReason, setApproveReason] = useState("");
   const queryClient = useQueryClient();
 
   const {
@@ -33,7 +31,7 @@ const UserInfoModal = ({ setShowModal, userData }) => {
         return await axiosInstance.post(
           `/api/tutors/profiles/user/${user_id}/approve/`,
           {
-            verification_notes: reason,
+            verification_status: notes,
           },
         );
       } else {
@@ -70,7 +68,7 @@ const UserInfoModal = ({ setShowModal, userData }) => {
           <X size={24} />
         </button>
 
-        {!isRejecting && !isApproving ? (
+        {!isRejecting ? (
           <div className="p-6 md:p-10">
             <div className="flex justify-center mb-6">
               <Image
@@ -116,11 +114,11 @@ const UserInfoModal = ({ setShowModal, userData }) => {
                   Reject
                 </button>
                 <button
-                  onClick={() => setIsApproving(true)}
+                  onClick={() => mutation.mutate({ action: "ACTIVATE" })}
                   className="py-3 rounded-xl bg-primary text-white font-bold"
                   disabled={mutation.isLoading}
                 >
-                  Activate
+                  {mutation.isLoading ? "Loading..." : "Activate"}
                 </button>
               </div>
             ) : (
@@ -131,36 +129,6 @@ const UserInfoModal = ({ setShowModal, userData }) => {
                 Close
               </button>
             )}
-          </div>
-        ) : isApproving ? (
-          /* Approval Screen */
-          <div className="p-8">
-            <h2 className="text-2xl font-bold text-center mb-6">
-              Approve Tutor
-            </h2>
-            <textarea
-              value={approveReason}
-              onChange={(e) => setApproveReason(e.target.value)}
-              placeholder="Provide reason for approval/activation..."
-              className="w-full h-40 p-4 bg-[#F4F7FE] rounded-2xl outline-none text-black"
-            />
-            <div className="mt-6 flex flex-col gap-3">
-              <button
-                onClick={() =>
-                  mutation.mutate({ action: "ACTIVATE", reason: approveReason })
-                }
-                disabled={!approveReason || mutation.isLoading}
-                className="py-4 rounded-xl bg-primary text-white font-bold disabled:bg-gray-400"
-              >
-                {mutation.isLoading ? "Processing..." : "Confirm Approval"}
-              </button>
-              <button
-                onClick={() => setIsApproving(false)}
-                className="text-gray-500 text-center"
-              >
-                Back
-              </button>
-            </div>
           </div>
         ) : (
           /* Rejection Screen */
@@ -205,4 +173,4 @@ const DetailRow = ({ label, value }) => (
   </div>
 );
 
-export default UserInfoModal;
+export default ApprovedModal;
